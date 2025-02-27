@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/alquila_seguro_dev
+    username: postgres
+    password: 4477
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true  # Muestra consultas SQL en logs
+  sql:
+    init:
+      mode: always  # Ejecuta scripts en `resources/schema.sql` y `data.sql`
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+    include-exception: true

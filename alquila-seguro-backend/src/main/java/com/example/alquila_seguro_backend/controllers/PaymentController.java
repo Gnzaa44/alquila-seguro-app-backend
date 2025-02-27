@@ -1,6 +1,6 @@
 package com.example.alquila_seguro_backend.controllers;
 
-import com.example.alquila_seguro_backend.entity.Booking;
+import com.example.alquila_seguro_backend.entity.Reservation;
 import com.example.alquila_seguro_backend.entity.Consultancy;
 import com.example.alquila_seguro_backend.entity.Payment;
 import com.example.alquila_seguro_backend.services.PaymentService;
@@ -21,10 +21,10 @@ public class PaymentController {
         Payment newPayment = paymentService.createPayment(payment);
         return ResponseEntity.ok(newPayment);
     }
-    @GetMapping("/booking/{bookingId}")
-    public List<Payment> getPaymentsByBooking(@PathVariable Long bookingId) {
-        Booking booking = new Booking(bookingId);
-        return paymentService.getPaymentsByBooking(booking);
+    @GetMapping("/booking/{reservationId}")
+    public List<Payment> getPaymentsByReservation(@PathVariable Long reservationId) {
+        Reservation reservation = new Reservation(reservationId);
+        return paymentService.getPaymentsByReservation(reservation);
     }
     @GetMapping("/consultancy/{consultancyId}")
     public List<Payment> getPaymentsByConsultancy(@PathVariable Long consultancyId) {
