@@ -3,7 +3,6 @@ package com.example.alquila_seguro_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @Entity
@@ -25,6 +24,6 @@ public class Property {
     private boolean available;
 
     @OneToMany(mappedBy = "property")
-    private List<Booking>bookings;
+    private List<Reservation> reservations;
 
 }

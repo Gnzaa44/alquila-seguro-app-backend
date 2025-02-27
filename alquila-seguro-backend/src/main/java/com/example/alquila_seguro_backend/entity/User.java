@@ -3,6 +3,8 @@ package com.example.alquila_seguro_backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 @Getter

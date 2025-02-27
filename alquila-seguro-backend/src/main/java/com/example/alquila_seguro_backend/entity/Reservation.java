@@ -4,13 +4,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "bookings")
+@Table(name = "reservations")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class Booking {
+public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,7 +28,7 @@ public class Booking {
     private Boolean confirmed;
     private String paymentStatus;
 
-    public Booking(Long bookingId) {
+    public Reservation(Long bookingId) {
         this.id = bookingId;
     }
 }

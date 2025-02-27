@@ -16,8 +16,8 @@ public class Payment {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "booking_id")
-    private Booking booking;
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 
     @ManyToOne
     @JoinColumn(name = "consultancy_id")
