@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/alquila-seguro-backend.iml" filepath="$PROJECT_DIR$/.idea/alquila-seguro-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/alquila-seguro-app-backend.iml" filepath="$PROJECT_DIR$/.idea/alquila-seguro-app-backend.iml" />
+      <module fileurl="file://$PROJECT_DIR$/alquila-seguro-backend/alquila-seguro-backend.iml" filepath="$PROJECT_DIR$/alquila-seguro-backend/alquila-seguro-backend.iml" />
     </modules>
   </component>
 </project>
