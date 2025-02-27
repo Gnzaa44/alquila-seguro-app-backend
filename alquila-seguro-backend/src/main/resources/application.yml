@@ -1,0 +1,16 @@
+spring:
+  profiles:
+    active: dev  # Cambia a 'prod' en producción
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+  cache:
+    type: caffeine  # Usa caché en memoria
+logging:
+  file:
+    name: logs/alquila-seguro-backend.log
+  level:
+    root: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: ERROR
