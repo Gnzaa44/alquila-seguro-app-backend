@@ -25,7 +25,7 @@ public class User {
 
     @NotNull(message = "name is required")
     @Size(min = 3, max = 100, message = "name must be between 3 and 100 characters long")
-    @Column(nullable = false) // Asegura que este campo no puede ser nulo
+    @Column(nullable = false)
     private String username;
     @NotNull(message = "password is required")
     @Size(min = 6, max = 100, message = "password must be between 6 y 100 characters long")
@@ -42,7 +42,7 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @NotNull(message = "role is required")
-    @Column(nullable = false) // Asegura que el rol no puede ser nulo
+    @Column(nullable = false) 
     private String role;
 
     @Column(nullable = false)
