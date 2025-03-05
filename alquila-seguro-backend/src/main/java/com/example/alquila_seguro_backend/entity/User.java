@@ -28,7 +28,7 @@ public class User {
     @Column(nullable = false)
     private String username;
     @NotNull(message = "password is required")
-    @Size(min = 6, max = 100, message = "password must be between 6 y 100 characters long")
+    @Size(min = 6, max = 100, message = "password must be between 6 and 100 characters long")
     @Column(nullable = false)
     private String password;
     @Email(message = "mail must be valid")
@@ -36,7 +36,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
     @NotNull(message = "phone is required")
-    @Size(min = 10, max = 15, message = "phone must be between 10 y 15 characters long")
+    @Size(min = 10, max = 15, message = "phone must be between 10 and 15 characters long")
     @Column(nullable = false)
     private String phone;
 
