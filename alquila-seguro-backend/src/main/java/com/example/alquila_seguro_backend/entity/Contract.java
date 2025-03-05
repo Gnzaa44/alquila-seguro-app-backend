@@ -1,6 +1,7 @@
 package com.example.alquila_seguro_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class Contract {
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
+    @NotNull(message = "contract terms are required")
     @Column(nullable = false, length = 1000) // Asegura que el contrato no sea demasiado corto
     private String terms;
 

@@ -23,11 +23,11 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "name is required")
+    @NotBlank(message = "name is required")
     @Size(min = 3, max = 100, message = "name must be between 3 and 100 characters long")
     @Column(nullable = false)
     private String username;
-    @NotNull(message = "password is required")
+    @NotBlank(message = "password is required")
     @Size(min = 6, max = 100, message = "password must be between 6 and 100 characters long")
     @Column(nullable = false)
     private String password;
@@ -35,7 +35,7 @@ public class User {
     @NotBlank(message = "mail is required")
     @Column(nullable = false, unique = true)
     private String email;
-    @NotNull(message = "phone is required")
+    @NotBlank(message = "phone is required")
     @Size(min = 10, max = 15, message = "phone must be between 10 and 15 characters long")
     @Column(nullable = false)
     private String phone;
@@ -43,7 +43,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "role is required")
     @Column(nullable = false) 
-    private String role;
+    private UserRole role;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
