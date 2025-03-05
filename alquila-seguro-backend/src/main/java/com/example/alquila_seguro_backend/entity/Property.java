@@ -1,6 +1,7 @@
 package com.example.alquila_seguro_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -45,6 +46,14 @@ public class Property {
     @Size(min = 3, max = 50, message = "category must be between 3 and 50 characters")
     @Column(nullable = false)
     private String category;
+
+    @DecimalMin(value = "-90.0", inclusive = true, message = "latitude cannot be less than 90")
+    @DecimalMax(value = "90.0", inclusive = true, message = "latitude cannot be greater than 90")
+    private double latitude;
+
+    @DecimalMin(value = "-180.0", inclusive = true, message = "longitude cannot be less than -180")
+    @DecimalMax(value = "180.0", inclusive = true, message = "longitude cannot be greater than 180")
+    private double longitude;
 
     @ElementCollection
     @CollectionTable(name = "property_features", joinColumns = @JoinColumn(name = "property_id"))
