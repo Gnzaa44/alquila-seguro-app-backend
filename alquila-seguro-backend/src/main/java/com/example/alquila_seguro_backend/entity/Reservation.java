@@ -40,4 +40,12 @@ public class Reservation {
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Contract contract;
 
+    @NotNull(message = "status is required")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
+
+}
+enum ReservationStatus {
+    PENDING, CONFIRMED, CANCELLED, COMPLETED
 }
