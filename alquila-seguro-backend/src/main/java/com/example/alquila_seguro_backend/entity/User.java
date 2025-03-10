@@ -29,9 +29,17 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Consultancy> consultancies;
 
+    @NotBlank(message = "firstname is required")
+    @Size(min = 3, max = 100, message = "fistname must be between 3 and 100 characters long")
+    @Column(nullable = false)
+    private String firstName;
+    @NotBlank(message = "lastname is required")
+    @Size(min = 3, max = 100, message = "lastname must be between 3 and 100 characters long")
+    @Column(nullable = false)
+    private String lastName;
 
-    @NotBlank(message = "name is required")
-    @Size(min = 3, max = 100, message = "name must be between 3 and 100 characters long")
+    @NotBlank(message = "username is required")
+    @Size(min = 3, max = 100, message = "username must be between 3 and 100 characters long")
     @Column(nullable = false)
     private String username;
     @NotBlank(message = "password is required")
