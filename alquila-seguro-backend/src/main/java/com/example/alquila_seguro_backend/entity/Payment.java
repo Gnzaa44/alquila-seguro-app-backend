@@ -1,6 +1,7 @@
 package com.example.alquila_seguro_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
 @Entity
@@ -23,11 +24,17 @@ public class Payment {
     @JoinColumn(name = "consultancy_id")
     private Consultancy consultancy;
 
+    @DecimalMin(value = "0.01", message = "total amount must be greater than 0")    @Column(nullable = false)
     private Double amount;
+    @Column(nullable = false)
     private String paymentMethod;
+    @Column(nullable = false)
     private String paymentStatus;
+    @Column(nullable = false)
     private String paymentDate;
+    @Column(nullable = false)
     private String paymentReference;
+    @Column(nullable = false)
     private String paymentDescription;
 
 }
