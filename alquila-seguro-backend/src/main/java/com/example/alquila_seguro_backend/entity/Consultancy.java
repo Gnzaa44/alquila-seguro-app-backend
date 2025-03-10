@@ -24,6 +24,10 @@ public class Consultancy {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "property_id")
+    private Property property;
+
 
     @NotBlank(message = "details are required")
     @Size(min = 10, max = 500, message = "details must be between 10 and 500 characters")
