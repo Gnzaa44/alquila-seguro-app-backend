@@ -24,21 +24,24 @@ public class Reservation {
     private Property property;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Temporal(TemporalType.DATE)
-    @NotNull(message = "start date cannot be null")
-    private LocalDateTime startDate;
-    @Temporal(TemporalType.DATE)
-    @NotNull(message = "end date cannot be null")
-    private LocalDateTime endDate;
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Invoice invoice;
 
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Contract contract;
+
+    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private Payment payment;
+
+    @NotNull(message = "start date cannot be null")
+    private LocalDateTime startDate;
+
+ 
+    @NotNull(message = "end date cannot be null")
+    private LocalDateTime endDate;
 
     @NotNull(message = "status is required")
     @Column(nullable = false)
