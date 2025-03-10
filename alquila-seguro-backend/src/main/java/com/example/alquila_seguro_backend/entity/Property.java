@@ -21,6 +21,12 @@ public class Property {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "property")
+    private List<Reservation> reservations;
+
+    @OneToMany(mappedBy = "property")
+    private List<Consultancy> consultancies;
+
     @NotBlank(message = "title is required")
     @Size(min = 3, max = 100, message = "title must be between 3 and 100 characters")
     @Column(nullable = false)
@@ -69,7 +75,5 @@ public class Property {
     @Column(nullable = false)
     private boolean available;
 
-    @OneToMany(mappedBy = "property")
-    private List<Reservation> reservations;
 
 }
