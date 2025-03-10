@@ -23,6 +23,13 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "user")
+    private List<Reservation> reservations;
+
+    @OneToMany(mappedBy = "user")
+    private List<Consultancy> consultancies;
+
+
     @NotBlank(message = "name is required")
     @Size(min = 3, max = 100, message = "name must be between 3 and 100 characters long")
     @Column(nullable = false)
