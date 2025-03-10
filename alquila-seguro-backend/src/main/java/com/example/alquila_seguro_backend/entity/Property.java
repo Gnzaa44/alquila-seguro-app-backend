@@ -3,7 +3,9 @@ package com.example.alquila_seguro_backend.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,11 +54,20 @@ public class Property {
 
     @DecimalMin(value = "-90.0", inclusive = true, message = "latitude cannot be less than 90")
     @DecimalMax(value = "90.0", inclusive = true, message = "latitude cannot be greater than 90")
-    private double latitude;
+    private BigDecimal latitude;
 
     @DecimalMin(value = "-180.0", inclusive = true, message = "longitude cannot be less than -180")
     @DecimalMax(value = "180.0", inclusive = true, message = "longitude cannot be greater than 180")
-    private double longitude;
+    private BigDecimal longitude;
+
+    @Min(value = 0, message = "number of rooms must be greater than or equal to 0")
+    private int numberOfRooms;
+
+    @Min(value = 0, message = "number of bathrooms must be greater than or equal to 0")
+    private int numberOfBathrooms;
+
+    @DecimalMin(value = "0.0", inclusive = false, message = "m² size must be greater than 0")
+    private BigDecimal size;
 
     @NotEmpty(message = "must have at least one feature")
     @ElementCollection
@@ -69,6 +80,7 @@ public class Property {
     @Column(name = "amenity")
     private Set<String> amenities = new HashSet<>();
 
+    @URL
     @Column(nullable = false)
     private String imageUrl;
 
