@@ -38,7 +38,6 @@ public class Reservation {
 
     @NotNull(message = "start date cannot be null")
     private LocalDateTime startDate;
-
  
     @NotNull(message = "end date cannot be null")
     private LocalDateTime endDate;
