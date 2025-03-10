@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name="payments")
 @Getter
@@ -20,7 +22,7 @@ public class Payment {
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "consultancy_id")
     private Consultancy consultancy;
 
@@ -31,7 +33,7 @@ public class Payment {
     @Column(nullable = false)
     private String paymentStatus;
     @Column(nullable = false)
-    private String paymentDate;
+    private LocalDateTime paymentDate;
     @Column(nullable = false)
     private String paymentReference;
     @Column(nullable = false)
