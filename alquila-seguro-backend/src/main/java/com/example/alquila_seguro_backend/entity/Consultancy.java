@@ -41,9 +41,5 @@ public class Consultancy {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ConsultancyStatus status;
-
-}
-enum ConsultancyStatus {
-    PENDING, RESPONDED, CLOSED
 }
 
