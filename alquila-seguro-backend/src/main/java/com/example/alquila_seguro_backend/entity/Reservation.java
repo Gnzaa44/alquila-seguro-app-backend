@@ -1,6 +1,8 @@
 package com.example.alquila_seguro_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -36,9 +38,12 @@ public class Reservation {
     @OneToOne(mappedBy = "reservation")
     private Payment payment;
 
+
+    @FutureOrPresent(message = "The start date must be today or in the future")
     @NotNull(message = "start date cannot be null")
     private LocalDateTime startDate;
- 
+
+    @Future(message = "The end date must be in the future")
     @NotNull(message = "end date cannot be null")
     private LocalDateTime endDate;
 
