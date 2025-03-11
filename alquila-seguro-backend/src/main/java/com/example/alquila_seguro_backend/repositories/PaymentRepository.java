@@ -8,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-
-    List <Payment> findByReservation(Reservation reservation);
-    List <Payment> findByConsultancy(Consultancy consultancy);
+    List<Payment> findByReservationId(Long reservationId);
 
 }

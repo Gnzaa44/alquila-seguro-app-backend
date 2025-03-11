@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContractRepository extends JpaRepository<Contract, Long> {
-    Contract findByReservationId(Long reservationId);
+
 }
