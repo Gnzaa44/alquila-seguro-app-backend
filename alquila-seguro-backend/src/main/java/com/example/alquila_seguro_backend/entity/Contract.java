@@ -23,10 +23,13 @@ public class Contract {
     @JoinColumn(name = "reservation_id", nullable = false)
     private Reservation reservation;
 
-    @NotNull(message = "contract terms are required")
-    @Column(nullable = false, length = 1000) // Asegura que el contrato no sea demasiado corto
-    private String terms;
-
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = false)
+    private String filePath;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus status;
 }

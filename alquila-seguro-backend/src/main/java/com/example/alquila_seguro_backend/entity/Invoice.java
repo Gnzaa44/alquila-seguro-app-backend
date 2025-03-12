@@ -33,4 +33,11 @@ public class Invoice {
     @Column(nullable = false)
     private LocalDateTime issuedAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private String filePath;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DocumentStatus status;
+
 }

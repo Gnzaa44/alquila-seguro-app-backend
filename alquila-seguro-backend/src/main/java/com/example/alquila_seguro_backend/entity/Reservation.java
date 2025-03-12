@@ -38,7 +38,6 @@ public class Reservation {
     @OneToOne(mappedBy = "reservation")
     private Payment payment;
 
-
     @FutureOrPresent(message = "The start date must be today or in the future")
     @NotNull(message = "start date cannot be null")
     private LocalDateTime startDate;
