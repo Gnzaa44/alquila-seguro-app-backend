@@ -1,7 +1,6 @@
 package com.example.alquila_seguro_backend.controllers;
 
 import com.example.alquila_seguro_backend.entity.Property;
-import com.example.alquila_seguro_backend.services.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

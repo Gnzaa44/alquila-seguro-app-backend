@@ -3,7 +3,6 @@ package com.example.alquila_seguro_backend.controllers;
 import com.example.alquila_seguro_backend.entity.Reservation;
 import com.example.alquila_seguro_backend.entity.Consultancy;
 import com.example.alquila_seguro_backend.entity.Payment;
-import com.example.alquila_seguro_backend.services.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
