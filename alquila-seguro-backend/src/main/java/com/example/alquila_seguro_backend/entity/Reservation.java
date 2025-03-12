@@ -26,8 +26,8 @@ public class Reservation {
     private Property property;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "client_id", nullable = false)
+    private Client client;
 
     @OneToOne(mappedBy = "reservation")
     private Invoice invoice;
@@ -52,7 +52,4 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
-}
-enum ReservationStatus {
-    PENDING, CONFIRMED, CANCELLED, COMPLETED
 }
