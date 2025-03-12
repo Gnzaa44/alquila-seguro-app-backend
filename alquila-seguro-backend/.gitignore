@@ -35,3 +35,5 @@ build/
 application.yml
 application-dev.yml
 application-prod.yml
+
+*.yml
