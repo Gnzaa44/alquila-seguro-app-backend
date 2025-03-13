@@ -1,13 +1,13 @@
 package com.example.alquila_seguro_backend.repositories;
 
-import com.example.alquila_seguro_backend.entity.User;
+import com.example.alquila_seguro_backend.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface ClientRepository extends JpaRepository<User, Long> {
-    Optional<User> findByEmail(String email);
+public interface ClientRepository extends JpaRepository<Client, Long> {
+    Optional<Client> findByEmail(String email);
     boolean existsByEmail(String email);
 }
