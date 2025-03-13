@@ -1,4 +1,4 @@
-package com.example.alquila_seguro_backend.Dto;
+package com.example.alquila_seguro_backend.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;

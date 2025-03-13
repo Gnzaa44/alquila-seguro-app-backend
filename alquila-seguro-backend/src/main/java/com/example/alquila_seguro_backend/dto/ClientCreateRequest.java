@@ -1,4 +1,4 @@
-package com.example.alquila_seguro_backend.Dto;
+package com.example.alquila_seguro_backend.dto;
 
 import com.example.alquila_seguro_backend.validation.ArgentinianPhoneNumber;
 import jakarta.validation.constraints.Email;
