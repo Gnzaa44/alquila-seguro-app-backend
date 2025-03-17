@@ -106,6 +106,20 @@ public class ClientService {
                         .message("Cliente con el id: " + id + " no encontrado")
                         .build());
     }
+    public ApiResponse<Void> deleteClient(Long id) {
+        return clientRepository.findById(id)
+                .map(client -> {
+                    clientRepository.delete(client);
+                    return ApiResponse.<Void>builder()
+                            .success(true)
+                            .message("Cliente eliminado correctamente")
+                            .build();
+                })
+                .orElse(ApiResponse.<Void>builder()
+                        .success(false)
+                        .message("Cliente con id: " + id + " no encontrado")
+                        .build());
+    }
 
 
 
