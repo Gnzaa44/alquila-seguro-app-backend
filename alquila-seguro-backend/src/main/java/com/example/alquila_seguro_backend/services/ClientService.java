@@ -106,6 +106,7 @@ public class ClientService {
                         .message("Cliente con el id: " + id + " no encontrado")
                         .build());
     }
+    @Transactional
     public ApiResponse<Void> deleteClient(Long id) {
         return clientRepository.findById(id)
                 .map(client -> {
