@@ -8,6 +8,9 @@ import com.example.alquila_seguro_backend.repositories.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ClientService {
@@ -23,6 +26,18 @@ public class ClientService {
                 .phone(client.getPhone())
                 .createdAt(client.getCreatedAt())
                 .build();
+    }
+    public ApiResponse<List<ClientResponse>> getAllClients() {
+        List<ClientResponse> clients = clientRepository.findAll()
+                .stream()
+                .map(this::mapToClientResponse)
+                .collect(Collectors.toList());
+        return ApiResponse.<List<ClientResponse>>builder()
+                .success(true)
+                .message("Clientes recuperados con exito")
+                .data(clients)
+                .build();
+
     }
 
     public ApiResponse<ClientResponse>createClient(ClientCreateRequest clientCreateRequest) {
