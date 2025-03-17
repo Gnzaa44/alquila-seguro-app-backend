@@ -1,5 +1,6 @@
 package com.example.alquila_seguro_backend.services;
 
+import com.example.alquila_seguro_backend.dto.ApiResponse;
 import com.example.alquila_seguro_backend.dto.ClientCreateRequest;
 import com.example.alquila_seguro_backend.dto.ClientResponse;
 import com.example.alquila_seguro_backend.entity.Client;
@@ -24,10 +25,14 @@ public class ClientService {
                 .build();
     }
 
-    public ClientResponse createClient(ClientCreateRequest clientCreateRequest) {
+    public ApiResponse<ClientResponse>createClient(ClientCreateRequest clientCreateRequest) {
         if(clientRepository.existsByEmail(clientCreateRequest.getEmail())) {
-            throw new IllegalArgumentException("El email ya existe");
+            return ApiResponse.<ClientResponse>builder()
+                    .success(false)
+                    .message("Mail ya en uso")
+                    .build();
         }
+
         Client client =  Client.builder()
                 .firstName(clientCreateRequest.getFirstName())
                 .lastName(clientCreateRequest.getLastName())
@@ -36,7 +41,12 @@ public class ClientService {
                 .build();
 
         Client savedClient=clientRepository.save(client);
-        return mapToClientResponse(savedClient);
+        return ApiResponse.<ClientResponse>builder()
+                .success(true)
+                .message("Cliente registrado correctamente")
+                .data(mapToClientResponse(savedClient))
+                .build();
+
     }
 
 }
