@@ -5,6 +5,7 @@ import com.example.alquila_seguro_backend.dto.ClientCreateRequest;
 import com.example.alquila_seguro_backend.dto.ClientResponse;
 import com.example.alquila_seguro_backend.entity.Client;
 import com.example.alquila_seguro_backend.repositories.ClientRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,19 @@ public class ClientService {
                 .build();
 
     }
+    public ApiResponse<ClientResponse> getClientById(Long id) {
+        return clientRepository.findById(id)
+                .map(client -> ApiResponse.<ClientResponse>builder()
+                        .success(true)
+                        .message("Cliente recuperado con exito")
+                        .data(mapToClientResponse(client))
+                        .build())
+                .orElse(ApiResponse.<ClientResponse>builder()
+                .success(false).message("Cliente con id : " + id + " no encontrado").build());
 
+    }
+
+    @Transactional
     public ApiResponse<ClientResponse>createClient(ClientCreateRequest clientCreateRequest) {
         if(clientRepository.existsByEmail(clientCreateRequest.getEmail())) {
             return ApiResponse.<ClientResponse>builder()
@@ -63,5 +76,38 @@ public class ClientService {
                 .build();
 
     }
+    @Transactional
+    public ApiResponse<ClientResponse> updateClient(Long id, ClientCreateRequest request) {
+        return clientRepository.findById(id)
+                .map(client -> {
+                    // Check if email is being changed and if it's already in use
+                    if (!client.getEmail().equals(request.getEmail()) &&
+                            clientRepository.existsByEmail(request.getEmail())) {
+                        return ApiResponse.<ClientResponse>builder()
+                                .success(false)
+                                .message("El Email ya existe")
+                                .build();
+                    }
+
+                    client.setFirstName(request.getFirstName());
+                    client.setLastName(request.getLastName());
+                    client.setEmail(request.getEmail());
+                    client.setPhone(request.getPhone());
+
+                    Client updatedClient = clientRepository.save(client);
+                    return ApiResponse.<ClientResponse>builder()
+                            .success(true)
+                            .message("Cliente actualizado correctamente")
+                            .data(mapToClientResponse(updatedClient))
+                            .build();
+                })
+                .orElse(ApiResponse.<ClientResponse>builder()
+                        .success(false)
+                        .message("Cliente con el id: " + id + " no encontrado")
+                        .build());
+    }
+
+
+
 
 }
