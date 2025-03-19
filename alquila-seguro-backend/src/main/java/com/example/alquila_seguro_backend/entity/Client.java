@@ -49,14 +49,14 @@ public class Client {
     @Column(nullable = false)
     private String lastName;
 
-    @Email(message = "El mail debe ser valido.")
+    @Email(message = "El mail debe ser válido.")
     @NotBlank(message = "El mail es obligatorio.")
     @Column(nullable = false, unique = true)
     private String email;
 
     @ArgentinianPhoneNumber(message = "El número de teléfono debe ser un número válido de Argentina.")
-    @NotBlank(message = "El telefono es obligatorio.")
-    @Size(min = 10, max = 15, message = "El telefono debe contener entre 10 y 15 caracteres.")
+    @NotBlank(message = "El teléfono es obligatorio.")
+    @Size(min = 10, max = 15, message = "El teléfono debe contener entre 10 y 15 caracteres.")
     @Column(nullable = false)
     private String phone;
 
