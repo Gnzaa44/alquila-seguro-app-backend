@@ -33,15 +33,15 @@ public class Admin {
     /**
      * Nombre de usuario del administrador.
      */
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 100, message = "Username must be between 3 and 100 characters long")
+    @NotBlank(message = "Nombre de usuario obligatorio.")
+    @Size(min = 3, max = 100, message = "El nombre de usuario debe tener entre 3 y 100 caracteres.")
     @Column(name = "username", nullable = false, unique = true)
     private String username;
     /**
      * Contraseña del administrador
      */
-    @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters long")
+    @NotBlank(message = "Contraseña obligatoria.")
+    @Size(min = 6, max = 100, message = "La contraseña debe tener entre 6 y 100 caracteres.")
     @Column(name = "password", nullable = false)
     private String password;
 }

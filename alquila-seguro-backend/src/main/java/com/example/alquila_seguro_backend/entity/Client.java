@@ -39,24 +39,24 @@ public class Client {
     @OneToMany(mappedBy = "client")
     private List<Consultancy> consultancies;
 
-    @NotBlank(message = "firstname is required")
-    @Size(min = 3, max = 100, message = "fistname must be between 3 and 100 characters long")
+    @NotBlank(message = "El nombre es obligatorio.")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres.")
     @Column(nullable = false)
     private String firstName;
 
-    @NotBlank(message = "lastname is required")
-    @Size(min = 3, max = 100, message = "lastname must be between 3 and 100 characters long")
+    @NotBlank(message = "El apellido es obligatorio.")
+    @Size(min = 3, max = 100, message = "El apellido debe tener entre 3 y 100 caracteres.")
     @Column(nullable = false)
     private String lastName;
 
-    @Email(message = "mail must be valid")
-    @NotBlank(message = "mail is required")
+    @Email(message = "El mail debe ser valido.")
+    @NotBlank(message = "El mail es obligatorio.")
     @Column(nullable = false, unique = true)
     private String email;
 
     @ArgentinianPhoneNumber(message = "El número de teléfono debe ser un número válido de Argentina.")
-    @NotBlank(message = "phone is required")
-    @Size(min = 10, max = 15, message = "phone must be between 10 and 15 characters long")
+    @NotBlank(message = "El telefono es obligatorio.")
+    @Size(min = 10, max = 15, message = "El telefono debe contener entre 10 y 15 caracteres.")
     @Column(nullable = false)
     private String phone;
 
