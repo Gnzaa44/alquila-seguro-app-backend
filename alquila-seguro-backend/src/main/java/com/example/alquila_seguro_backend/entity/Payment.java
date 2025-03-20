@@ -19,11 +19,11 @@ public class Payment {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "reservation_id")
+    @JoinColumn(name = "reservation_id", nullable = true)
     private Reservation reservation;
 
     @OneToOne
-    @JoinColumn(name = "consultancy_id")
+    @JoinColumn(name = "consultancy_id", nullable = true)
     private Consultancy consultancy;
 
     @DecimalMin(value = "0.01", message = "total amount must be greater than 0")    @Column(nullable = false)
