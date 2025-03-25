@@ -44,9 +44,10 @@ public class Payment {
     @JoinColumn(name = "consultancy_id", nullable = true)
     private Consultancy consultancy;
     /**
-     * Monto total del pago.
+     * Monto del pago.
      */
-    @DecimalMin(value = "0.01", message = "total amount must be greater than 0")    @Column(nullable = false)
+    @DecimalMin(value = "0.01", message = "El monto debe ser mayor que 0.")
+    @Column(nullable = false)
     private Double amount;
     /**
      * Metodo de pago elegido.

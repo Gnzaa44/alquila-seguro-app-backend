@@ -41,8 +41,8 @@ public class Invoice {
     /**
      * Monto total incluido.
      */
-    @NotNull(message = "total amount is required")
-    @DecimalMin(value = "0.01", message = "total amount must be greater than 0")
+    @NotNull(message = "El monto total es obligatorio.")
+    @DecimalMin(value = "0.01", message = "El monto total debe ser mayor que 0.")
     @Column(nullable = false)
     private BigDecimal totalAmount;
     /**

@@ -66,19 +66,19 @@ public class Reservation {
     /**
      * Fecha de inicio de la reserva.
      */
-    @FutureOrPresent(message = "The start date must be today or in the future")
-    @NotNull(message = "start date cannot be null")
+    @FutureOrPresent(message = "La fecha de entrada debe ser hoy o en el futuro.")
+    @NotNull(message = "La fecha de entrada no puede ser vacia.")
     private LocalDateTime startDate;
     /**
      * Fecha de fin de la reserva.
      */
-    @Future(message = "The end date must be in the future")
-    @NotNull(message = "end date cannot be null")
+    @Future(message = "La fecha de salida debe ser en el futuro.")
+    @NotNull(message = "La fecha de salida no puede ser vacia.")
     private LocalDateTime endDate;
     /**
      * Posibles estados de la reserva.
      */
-    @NotNull(message = "status is required")
+    @NotNull(message = "El estado es requerido.")
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
