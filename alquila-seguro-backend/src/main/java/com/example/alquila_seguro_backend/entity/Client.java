@@ -25,41 +25,65 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @Builder
+/**
+ * Entidad que representa a un cliente en el sistema de alquileres temporarios.
+ * Almacena información para almacenar informacion sobre los clientes para ser manipulada.
+ *
+ * @author Gonzalo
+ * @version 1.0
+ * @since 12/3/2025
+ */
 public class Client {
     /**
-     * Identificador único del cliente
+     * Identificador único del cliente.
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    /**
+     * Lista de reservas que estaran relacionadas con el cliente.
+     * Uno --> Muchas.
+     */
     @OneToMany(mappedBy = "client")
     private List<Reservation> reservations;
-
+    /**
+     * Lista de consultorias que estaran relacionadas con el cliente.
+     * Uno --> Muchas.
+     */
     @OneToMany(mappedBy = "client")
     private List<Consultancy> consultancies;
-
+    /**
+     * Nombre del cliente.
+     */
     @NotBlank(message = "El nombre es obligatorio.")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres.")
     @Column(nullable = false)
     private String firstName;
-
+    /**
+     * Apellido del cliente.
+     */
     @NotBlank(message = "El apellido es obligatorio.")
     @Size(min = 3, max = 100, message = "El apellido debe tener entre 3 y 100 caracteres.")
     @Column(nullable = false)
     private String lastName;
-
+    /**
+     * Email del cliente.
+     */
     @Email(message = "El mail debe ser válido.")
     @NotBlank(message = "El mail es obligatorio.")
     @Column(nullable = false, unique = true)
     private String email;
-
+    /**
+     * Número de teléfono del cliente.
+     */
     @ArgentinianPhoneNumber(message = "El número de teléfono debe ser un número válido de Argentina.")
     @NotBlank(message = "El teléfono es obligatorio.")
     @Size(min = 10, max = 15, message = "El teléfono debe contener entre 10 y 15 caracteres.")
     @Column(nullable = false)
     private String phone;
-
+    /**
+     * Lleva registro de cuando fue creado el cliente.
+     */
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
