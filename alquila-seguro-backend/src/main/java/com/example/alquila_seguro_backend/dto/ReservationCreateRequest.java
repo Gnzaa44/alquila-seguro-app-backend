@@ -1,5 +1,9 @@
 package com.example.alquila_seguro_backend.dto;
 
+import com.example.alquila_seguro_backend.entity.ReservationStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
@@ -28,4 +32,9 @@ public class ReservationCreateRequest {
     @Future(message = "End date must be in the future")
     @NotNull(message = "End date is required")
     private LocalDateTime endDate;
+
+    @NotNull(message = "El estado es requerido.")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReservationStatus status;
 }

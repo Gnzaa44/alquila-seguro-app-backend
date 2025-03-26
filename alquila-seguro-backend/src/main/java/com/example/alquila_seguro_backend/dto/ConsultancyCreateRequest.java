@@ -1,5 +1,9 @@
 package com.example.alquila_seguro_backend.dto;
 
+import com.example.alquila_seguro_backend.entity.ConsultancyStatus;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,4 +26,9 @@ public class ConsultancyCreateRequest {
     @NotBlank(message = "Details are required")
     @Size(min = 10, max = 500, message = "Details must be between 10 and 500 characters")
     private String details;
+
+    @NotNull(message = "El estado es obligatorio.")
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ConsultancyStatus status;
 }

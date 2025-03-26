@@ -21,5 +21,4 @@ public class ReservationResponse {
     private ReservationStatus status;
     private boolean hasInvoice;
     private boolean hasContract;
-    private boolean hasPaid;
 }
