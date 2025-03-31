@@ -38,7 +38,7 @@ public class Consultancy {
      */
     @ManyToOne
     @JoinColumn(name = "client_id")
-    private Client user;
+    private Client client;
     /**
      * Consultorias relacionadas con una propiedad.
      * Muchas --> Una
@@ -46,6 +46,12 @@ public class Consultancy {
     @ManyToOne
     @JoinColumn(name = "property_id")
     private Property property;
+    /**
+     * Consultoria asociada a un pago.
+     * Uno --> Uno
+     */
+    @OneToOne(mappedBy = "consultancy")
+    private Payment payment;
     /**
      * Motivos de la consultoria realizada.
      */
