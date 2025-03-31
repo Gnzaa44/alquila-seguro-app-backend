@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class ClientService {
     private final ClientRepository clientRepository;
 
-    // Helper method to map Client entity to ClientResponse DTO
     private ClientResponse mapToClientResponse(Client client) {
         return ClientResponse.builder()
                 .id(client.getId())
@@ -34,7 +33,7 @@ public class ClientService {
                 .collect(Collectors.toList());
         return ApiResponse.<List<ClientResponse>>builder()
                 .success(true)
-                .message("Clientes recuperados con exito")
+                .message("Clientes recuperados correctamente.")
                 .data(clients)
                 .build();
 
@@ -43,7 +42,7 @@ public class ClientService {
         return clientRepository.findById(id)
                 .map(client -> ApiResponse.<ClientResponse>builder()
                         .success(true)
-                        .message("Cliente recuperado con exito")
+                        .message("Cliente recuperado correctamente.")
                         .data(mapToClientResponse(client))
                         .build())
                 .orElse(ApiResponse.<ClientResponse>builder()
@@ -70,7 +69,7 @@ public class ClientService {
         Client savedClient=clientRepository.save(client);
         return ApiResponse.<ClientResponse>builder()
                 .success(true)
-                .message("Cliente registrado correctamente")
+                .message("Cliente registrado correctamente.")
                 .data(mapToClientResponse(savedClient))
                 .build();
 
@@ -84,7 +83,7 @@ public class ClientService {
                             clientRepository.existsByEmail(request.getEmail())) {
                         return ApiResponse.<ClientResponse>builder()
                                 .success(false)
-                                .message("El Email ya existe")
+                                .message("El mail ya existe.")
                                 .build();
                     }
 
@@ -96,13 +95,13 @@ public class ClientService {
                     Client updatedClient = clientRepository.save(client);
                     return ApiResponse.<ClientResponse>builder()
                             .success(true)
-                            .message("Cliente actualizado correctamente")
+                            .message("Cliente actualizado correctamente.")
                             .data(mapToClientResponse(updatedClient))
                             .build();
                 })
                 .orElse(ApiResponse.<ClientResponse>builder()
                         .success(false)
-                        .message("Cliente con el id: " + id + " no encontrado")
+                        .message("Cliente con el id: " + id + " no encontrado.")
                         .build());
     }
     @Transactional
@@ -112,12 +111,12 @@ public class ClientService {
                     clientRepository.delete(client);
                     return ApiResponse.<Void>builder()
                             .success(true)
-                            .message("Cliente eliminado correctamente")
+                            .message("Cliente eliminado correctamente.")
                             .build();
                 })
                 .orElse(ApiResponse.<Void>builder()
                         .success(false)
-                        .message("Cliente con id: " + id + " no encontrado")
+                        .message("Cliente con id: " + id + " no encontrado.")
                         .build());
     }
 
