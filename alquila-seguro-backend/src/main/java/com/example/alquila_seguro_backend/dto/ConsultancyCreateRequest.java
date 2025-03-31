@@ -17,14 +17,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConsultancyCreateRequest {
-    @NotNull(message = "Client ID is required")
+    @NotNull(message = "ID del cliente obligatorio.")
     private Long clientId;
 
-    @NotNull(message = "Property ID is required")
+    @NotNull(message = "ID de la propiedad obligatorio.")
     private Long propertyId;
 
-    @NotBlank(message = "Details are required")
-    @Size(min = 10, max = 500, message = "Details must be between 10 and 500 characters")
+    @NotBlank(message = "Los detalles de la consulta son obligatorios.")
+    @Size(min = 10, max = 500, message = "El mensaje debe contener entre 10 y 500 caracteres.")
     private String details;
 
     @NotNull(message = "El estado es obligatorio.")
