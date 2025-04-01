@@ -1,6 +1,6 @@
 package com.example.alquila_seguro_backend.dto;
 
-import com.example.alquila_seguro_backend.entity.DocumentStatus;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ContractResponse {
-    private Long id;
+public class CreateContractRequest {
+    @NotNull(message = "El id de la reserva es requerido.")
     private Long reservationId;
-    private LocalDateTime createdAt;
+    @NotNull(message = "La ruta del archivo es requerida.")
     private String filePath;
 }

@@ -18,5 +18,4 @@ public class ConsultancyResponse {
     private PropertyResponse property;
     private String details;
     private LocalDateTime requestedAt;
-    private ConsultancyStatus status;
 }

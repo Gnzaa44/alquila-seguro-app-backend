@@ -17,6 +17,6 @@ public class InvoiceResponse {
     private Long id;
     private Long reservationId;
     private BigDecimal totalAmount;
+    private String filePath;
     private LocalDateTime issuedAt;
-    private DocumentStatus status;
 }

@@ -27,8 +27,4 @@ public class ConsultancyCreateRequest {
     @Size(min = 10, max = 500, message = "El mensaje debe contener entre 10 y 500 caracteres.")
     private String details;
 
-    @NotNull(message = "El estado es obligatorio.")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ConsultancyStatus status;
 }
