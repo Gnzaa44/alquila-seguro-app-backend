@@ -2,13 +2,16 @@ package com.example.alquila_seguro_backend.services;
 
 import com.example.alquila_seguro_backend.dto.ApiResponse;
 import com.example.alquila_seguro_backend.dto.ContractResponse;
+import com.example.alquila_seguro_backend.dto.CreateContractRequest;
 import com.example.alquila_seguro_backend.entity.Contract;
 import com.example.alquila_seguro_backend.entity.DocumentStatus;
+import com.example.alquila_seguro_backend.entity.Reservation;
 import com.example.alquila_seguro_backend.repositories.ContractRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,12 +25,19 @@ public class ContractService {
                 .id(contract.getId())
                 .reservationId(contract.getReservation().getId())
                 .createdAt(contract.getCreatedAt())
-                .status(contract.getStatus())
+                .filePath(contract.getFilePath())
                 .build();
 
     }
     @Transactional
-    public ApiResponse<ContractResponse> createContract(Contract contract) {
+    public ApiResponse<ContractResponse> createContract(CreateContractRequest request) {
+        Contract contract = Contract.builder()
+                .reservation(Reservation.builder().id(request.getReservationId()).build())
+                .filePath(request.getFilePath())
+                .status(DocumentStatus.PENDING)
+                .createdAt(LocalDateTime.now())
+                .build();
+
         Contract savedContract = contractRepository.save(contract);
         return ApiResponse.<ContractResponse>builder()
                 .success(true)

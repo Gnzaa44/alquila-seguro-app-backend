@@ -1,9 +1,6 @@
 package com.example.alquila_seguro_backend.services;
 
-import com.example.alquila_seguro_backend.dto.ApiResponse;
-import com.example.alquila_seguro_backend.dto.ClientResponse;
-import com.example.alquila_seguro_backend.dto.ConsultancyResponse;
-import com.example.alquila_seguro_backend.dto.PropertyResponse;
+import com.example.alquila_seguro_backend.dto.*;
 import com.example.alquila_seguro_backend.entity.Client;
 import com.example.alquila_seguro_backend.entity.Consultancy;
 import com.example.alquila_seguro_backend.entity.ConsultancyStatus;
@@ -12,7 +9,6 @@ import com.example.alquila_seguro_backend.repositories.ClientRepository;
 import com.example.alquila_seguro_backend.repositories.ConsultancyRepository;
 import com.example.alquila_seguro_backend.repositories.PropertyRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,12 +60,11 @@ public class ConsultancyService {
                 .property(mapToPropertyResponse(consultancy.getProperty()))
                 .details(consultancy.getDetails())
                 .requestedAt(consultancy.getRequestedAt())
-                .status(consultancy.getStatus())
                 .build();
     }
     @Transactional
-    public ApiResponse<ConsultancyResponse> createConsultancy(Long clientId, Long propertyId, String details) {
-        Client client = clientRepository.findById(clientId).orElse(null);
+    public ApiResponse<ConsultancyResponse> createConsultancy(ConsultancyCreateRequest request) {
+        Client client = clientRepository.findById(request.getClientId()).orElse(null);
         if (client == null) {
             return ApiResponse.<ConsultancyResponse>builder()
                     .success(false)
@@ -77,7 +72,7 @@ public class ConsultancyService {
                     .build();
         }
 
-        Property property = propertyRepository.findById(propertyId).orElse(null);
+        Property property = propertyRepository.findById(request.getPropertyId()).orElse(null);
         if (property == null) {
             return ApiResponse.<ConsultancyResponse>builder()
                     .success(false)
@@ -88,7 +83,7 @@ public class ConsultancyService {
         Consultancy consultancy = Consultancy.builder()
                 .client(client)
                 .property(property)
-                .details(details)
+                .details(request.getDetails())
                 .requestedAt(LocalDateTime.now())
                 .status(ConsultancyStatus.PENDING)
                 .build();

@@ -7,6 +7,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,12 +22,19 @@ public class InvoiceService {
                 .reservationId(invoice.getReservation().getId())
                 .totalAmount(invoice.getTotalAmount())
                 .issuedAt(invoice.getIssuedAt())
-                .status(invoice.getStatus())
+                .filePath(invoice.getFilePath())
                 .build();
     }
     @Transactional
-    public ApiResponse<InvoiceResponse> createInvoice(Invoice invoice) {
-        Invoice savedInvoice = invoiceRepository.save(invoice);
+    public ApiResponse<InvoiceResponse> createInvoice(CreateInvoiceRequest request) {
+       Invoice invoice = Invoice.builder()
+               .reservation(Reservation.builder().id(request.getReservationId()).build())
+               .filePath(request.getFilePath())
+               .totalAmount(request.getTotalAmount())
+               .issuedAt(LocalDateTime.now())
+               .status(DocumentStatus.PENDING)
+               .build();
+       Invoice savedInvoice = invoiceRepository.save(invoice);
         return ApiResponse.<InvoiceResponse>builder()
                 .success(true)
                 .message("Factura generada correctamente.")

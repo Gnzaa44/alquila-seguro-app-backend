@@ -48,7 +48,6 @@ public class ReservationService {
                 .client(mapToClientResponse(reservation.getClient()))
                 .startDate(reservation.getStartDate())
                 .endDate(reservation.getEndDate())
-                .status(reservation.getStatus())
                 .hasInvoice(hasInvoice)
                 .hasContract(hasContract)
                 .build();
