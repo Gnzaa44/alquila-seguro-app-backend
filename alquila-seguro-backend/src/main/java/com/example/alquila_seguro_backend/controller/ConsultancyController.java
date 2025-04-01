@@ -1,9 +1,12 @@
 package com.example.alquila_seguro_backend.controller;
 
 import com.example.alquila_seguro_backend.dto.ApiResponse;
+import com.example.alquila_seguro_backend.dto.ClientCreateRequest;
+import com.example.alquila_seguro_backend.dto.ConsultancyCreateRequest;
 import com.example.alquila_seguro_backend.dto.ConsultancyResponse;
 import com.example.alquila_seguro_backend.entity.ConsultancyStatus;
 import com.example.alquila_seguro_backend.services.ConsultancyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,36 +21,32 @@ public class ConsultancyController {
     private final ConsultancyService consultancyService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ConsultancyResponse>> createConsultancy(
-            @RequestParam Long clientId,
-            @RequestParam Long propertyId,
-            @RequestParam String details) {
-        return ResponseEntity.ok(consultancyService.createConsultancy(clientId, propertyId, details));
+    public ResponseEntity<ApiResponse<ConsultancyResponse>> createConsultancy(@Valid @RequestBody ConsultancyCreateRequest request) {
+        return ResponseEntity.ok(consultancyService.createConsultancy(request));
     }
 
     @PutMapping("/{id}/status")
-    @PreAuthorize("hasRole('ADMIN')")  // Solo admins pueden cambiar el estado de una consultoría
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConsultancyResponse>> updateConsultancyStatus(
             @PathVariable Long id,
-            @RequestParam ConsultancyStatus status) {
+            @Valid @RequestParam ConsultancyStatus status) {
         return ResponseEntity.ok(consultancyService.updateConsultancyStatus(id, status));
     }
 
     @GetMapping("/client/{clientId}")
-    @PreAuthorize("hasRole('ADMIN')")  // Clientes solo ven sus propias consultas
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByClient(@PathVariable Long clientId) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByClient(clientId));
     }
 
     @GetMapping("/property/{propertyId}")
-    @PreAuthorize("hasRole('ADMIN')")  // Solo admins pueden ver consultas por propiedad
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByProperty(@PathVariable Long propertyId) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByProperty(propertyId));
     }
 
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasRole('ADMIN')")  // Solo admins pueden ver todas las consultas por estado
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByStatus(@PathVariable ConsultancyStatus status) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByStatus(status));
     }
