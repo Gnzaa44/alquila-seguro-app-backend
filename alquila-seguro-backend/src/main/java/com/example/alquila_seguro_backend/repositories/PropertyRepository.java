@@ -14,7 +14,7 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     List<Property> findByType(PropertyType type);
     List<Property> findByCategory(String category);
     List<Property> findByPricePerNightLessThanEqual(Double maxPrice);
-    List<Property> findByNumberOfRoomsGreaterThanEqual(int minRooms);
+
 
     @Query("SELECT p FROM Property p WHERE p.location LIKE %:location%")
     List<Property> findByLocationContaining(String location);
