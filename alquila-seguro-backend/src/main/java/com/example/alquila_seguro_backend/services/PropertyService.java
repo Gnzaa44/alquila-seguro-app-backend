@@ -172,6 +172,25 @@ public class PropertyService {
                         .build());
     }
     @Transactional
+    public ApiResponse<PropertyResponse> updatePropertyByStatus(Long id, PropertyStatus status) {
+        return propertyRepository.findById(id)
+                .map(property -> {
+                    property.setPropertyStatus(status);
+                    Property updatedProperty = propertyRepository.save(property);
+                    return ApiResponse.<PropertyResponse>builder()
+                            .success(true)
+                            .message("Estado de la propiedad actualizado correctamente.")
+                            .data(mapToPropertyResponse(updatedProperty))
+                            .build();
+                })
+                .orElse(ApiResponse.<PropertyResponse>builder()
+                        .success(false)
+                        .message("Propiedad con el id: " + id + " no actualizada.")
+                        .build());
+
+    }
+
+    @Transactional
     public ApiResponse<Void> deleteProperty(Long id) {
         return propertyRepository.findById(id)
                 .map(property -> {
@@ -186,7 +205,7 @@ public class PropertyService {
                         .message("Propiedad con el id: " + id + " no encontrada.")
                         .build());
     }
-    public ApiResponse<List<PropertyResponse>> findByPropertyType(PropertyType propertyType) {
+    public ApiResponse<List<PropertyResponse>> getByPropertyType(PropertyType propertyType) {
         List<Property> properties = propertyRepository.findByType(propertyType);
         List<PropertyResponse> propertyResponses = properties.stream()
                 .map(this::mapToPropertyResponse)
@@ -199,6 +218,7 @@ public class PropertyService {
                 .build();
 
     }
+
 
     
 }
