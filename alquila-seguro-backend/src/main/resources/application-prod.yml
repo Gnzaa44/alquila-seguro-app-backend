@@ -14,6 +14,17 @@ spring:
     hibernate:
       ddl-auto: validate  # Verifica que las tablas existen, pero NO las modifica
     show-sql: false  # Desactiva logs SQL en producción
+  mail:
+    host: ${MAIL_HOST_PROD}
+    port: ${MAIL_PORT_PROD}}
+    username: ${MAIL_USERNAME_PROD}
+    password: ${MAIL_PASSWORD_PROD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   sql:
     init:
       mode: never  # No carga scripts automáticamente en producción

@@ -10,6 +10,17 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true  # Muestra consultas SQL en logs
+  mail:
+    host: ${MAIL_HOST_DEV}
+    port: ${MAIL_PORT_DEV}}
+    username: ${MAIL_USERNAME_DEV}
+    password: ${MAIL_PASSWORD_DEV}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   sql:
     init:
       mode: always  # Ejecuta scripts en `resources/schema.sql` y `data.sql`
