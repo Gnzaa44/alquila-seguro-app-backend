@@ -5,19 +5,24 @@ import com.example.alquila_seguro_backend.entity.*;
 import com.example.alquila_seguro_backend.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ReservationService.class);
     private final ReservationRepository reservationRepository;
     private final ClientRepository clientRepository;
     private final PropertyRepository propertyRepository;
-
+    private final EmailService emailService;
+    private final InvoiceRepository invoiceRepository;
+    private final ContractRepository contractRepository;
 
     private PropertyResponse mapToPropertyResponse(Property property) {
         return PropertyResponse.builder()
@@ -180,6 +185,31 @@ public class ReservationService {
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
+        String subject = "Confirmacion de reserva";
+        String body = "Su reserva ha sido confirmada. Adjuntamos los archivos PDF de la factura y el contrato.";
+        try{
+            Invoice invoice = savedReservation.getInvoice();
+            Contract contract = savedReservation.getContract();
+            if( invoice != null && contract != null ) {
+                File invoiceFile = new File(invoice.getFilePath());
+                File contractFile = new File(contract.getFilePath());
+
+                emailService.sendEmailWithAttachment(reservation.getClient().getEmail(), subject, body, invoiceFile);
+                emailService.sendEmailWithAttachment(reservation.getClient().getEmail(), subject, body, contractFile);
+
+                invoice.setStatus(DocumentStatus.SENT);
+                contract.setStatus(DocumentStatus.SENT);
+                invoiceRepository.save(invoice);
+                contractRepository.save(contract);
+
+            }else{
+                logger.warn("Factura o contrato no encontrado con el id de reserva: {}",reservation.getId());
+            }
+
+        } catch (Exception e) {
+            logger.warn("Error al enviar el email con el id de reserva: {}", reservation.getId(), e);
+        }
+
         return ApiResponse.<ReservationResponse>builder()
                 .success(true)
                 .message("Reserva creada correctamente.")

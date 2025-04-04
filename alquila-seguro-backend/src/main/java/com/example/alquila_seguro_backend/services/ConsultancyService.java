@@ -9,6 +9,8 @@ import com.example.alquila_seguro_backend.repositories.ClientRepository;
 import com.example.alquila_seguro_backend.repositories.ConsultancyRepository;
 import com.example.alquila_seguro_backend.repositories.PropertyRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ public class ConsultancyService {
     private final ConsultancyRepository consultancyRepository;
     private final ClientRepository clientRepository;
     private final PropertyRepository propertyRepository;
+    private final EmailService emailService;
+    private final Logger LOGGER =  LoggerFactory.getLogger(ConsultancyService.class.getName());
     private ClientResponse mapToClientResponse(Client client) {
         return ClientResponse.builder()
                 .id(client.getId())
@@ -87,6 +91,19 @@ public class ConsultancyService {
                 .requestedAt(LocalDateTime.now())
                 .status(ConsultancyStatus.PENDING)
                 .build();
+
+        String subject = "Nueva Consultoría Creada";
+        String body = "Se ha creado una nueva consultoría con los siguientes detalles:\n\n" +
+                "Cliente: " + consultancy.getClient().getFirstName() + " " + consultancy.getClient().getLastName() + "\n" +
+                "Correo electrónico: " + consultancy.getClient().getEmail() + "\n" +
+                "Propiedad: " + consultancy.getProperty().getTitle() + "\n" +
+                "Detalles: " + consultancy.getDetails();
+        try{
+            emailService.sendEmail("example@gmail.com", subject, body);
+
+        } catch (Exception e) {
+            LOGGER.error("Error al enviar el mail a la consultoria con id: {} ", consultancy.getId(), e.getMessage());
+        }
 
         Consultancy savedConsultancy = consultancyRepository.save(consultancy);
         return ApiResponse.<ConsultancyResponse>builder()
