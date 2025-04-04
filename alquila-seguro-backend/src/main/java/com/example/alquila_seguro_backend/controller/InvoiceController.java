@@ -9,6 +9,7 @@ import com.example.alquila_seguro_backend.services.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,7 @@ public class InvoiceController {
         return ResponseEntity.ok(invoiceService.createInvoice(request));
     }
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity <ApiResponse<InvoiceResponse>> updateInvoiceByStatus( @PathVariable Long id, @Valid DocumentStatus status) {
         return ResponseEntity.ok(invoiceService.updateInvoiceStatus(id, status));
     }

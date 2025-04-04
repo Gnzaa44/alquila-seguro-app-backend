@@ -21,17 +21,14 @@ public class ContractController {
     private ContractService contractService;
 
     @GetMapping("/reservation/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ContractResponse>> getContractByReservationId(@PathVariable Long id) {
         return ResponseEntity.ok(contractService.getContractByReservationId(id));
     }
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ContractResponse>>> getContractsByStatus(@PathVariable DocumentStatus status) {
         return ResponseEntity.ok(contractService.getContractsByStatus(status));
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ContractResponse>> getContractById(@PathVariable Long id) {
         return ResponseEntity.ok(contractService.getContractById(id));
     }
@@ -40,6 +37,7 @@ public class ContractController {
         return ResponseEntity.ok(contractService.createContract(request));
     }
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ContractResponse>> updateContractStatus(@PathVariable Long id, @Valid @RequestParam DocumentStatus status) {
         return ResponseEntity.ok(contractService.updateContractStatus(id, status));
     }

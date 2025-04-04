@@ -22,12 +22,10 @@ public class ClientController {
     private final ClientService clientService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ClientResponse>>> getAllClients() {
         return ResponseEntity.ok(clientService.getAllClients());
     }
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ClientResponse>> getClientById(@PathVariable Long id) {
         return ResponseEntity.ok(clientService.getClientById(id));
     }

@@ -17,6 +17,7 @@ public enum PropertyStatus {
 
     /**
      * Se necesita una revision antes de poder estar disponible.
+     * Utilizada para propiedades de consultoria requerida.
      */
     NEEDS_REVIEW,
 

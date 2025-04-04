@@ -24,7 +24,6 @@ public class ConsultancyController {
     public ResponseEntity<ApiResponse<ConsultancyResponse>> createConsultancy(@Valid @RequestBody ConsultancyCreateRequest request) {
         return ResponseEntity.ok(consultancyService.createConsultancy(request));
     }
-
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConsultancyResponse>> updateConsultancyStatus(
@@ -34,25 +33,21 @@ public class ConsultancyController {
     }
 
     @GetMapping("/client/{clientId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByClient(@PathVariable Long clientId) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByClient(clientId));
     }
 
     @GetMapping("/property/{propertyId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByProperty(@PathVariable Long propertyId) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByProperty(propertyId));
     }
 
     @GetMapping("/status/{status}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<ConsultancyResponse>>> getConsultanciesByStatus(@PathVariable ConsultancyStatus status) {
         return ResponseEntity.ok(consultancyService.getConsultanciesByStatus(status));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ConsultancyResponse>> getConsultancyById(@PathVariable Long id) {
         return ResponseEntity.ok(consultancyService.getConsultancyById(id));
     }
