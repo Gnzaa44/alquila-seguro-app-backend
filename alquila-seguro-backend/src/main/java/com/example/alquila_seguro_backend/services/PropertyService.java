@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PropertyService {
-    PropertyRepository propertyRepository;
+    private final PropertyRepository propertyRepository;
 
     private PropertyResponse mapToPropertyResponse(Property property) {
         return PropertyResponse.builder()
@@ -80,7 +80,7 @@ public class PropertyService {
     }
 
     public ApiResponse<List<PropertyResponse>> getAvailableProperties() {
-        List<PropertyResponse> properties = propertyRepository.findByStatus(PropertyStatus.AVAILABLE).stream()
+        List<PropertyResponse> properties = propertyRepository.findByPropertyStatus(PropertyStatus.AVAILABLE).stream()
                 .map(this::mapToPropertyResponse)
                 .collect(Collectors.toList());
         return ApiResponse.<List<PropertyResponse>>builder()
@@ -206,7 +206,7 @@ public class PropertyService {
                         .build());
     }
     public ApiResponse<List<PropertyResponse>> getByPropertyType(PropertyType propertyType) {
-        List<Property> properties = propertyRepository.findByType(propertyType);
+        List<Property> properties = propertyRepository.findByPropertyType(propertyType);
         List<PropertyResponse> propertyResponses = properties.stream()
                 .map(this::mapToPropertyResponse)
                 .collect(Collectors.toList());

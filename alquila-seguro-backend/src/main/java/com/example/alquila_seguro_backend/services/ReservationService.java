@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import java.io.File;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -130,15 +132,6 @@ public class ReservationService {
 
     @Transactional
     public ApiResponse<ReservationResponse> createReservation(ReservationCreateRequest request) {
-        // Check if client exists
-        Client client = clientRepository.findById(request.getClientId())
-                .orElse(null);
-        if (client == null) {
-            return ApiResponse.<ReservationResponse>builder()
-                    .success(false)
-                    .message("Cliente con el id: " + request.getClientId() + " no encontrado.")
-                    .build();
-        }
 
         // Check if property exists and is available
         Property property = propertyRepository.findById(request.getPropertyId())
@@ -175,9 +168,18 @@ public class ReservationService {
                     .message("La propiedad ya esta reservada para las fechas seleccionadas.")
                     .build();
         }
+         Client client1 = clientRepository.findByEmail(request.getClientEmail()).orElseGet(() -> {
+            Client newClient = Client.builder()
+                    .firstName(request.getClientFirstName())
+                    .lastName(request.getClientLastName())
+                    .email(request.getClientEmail())
+                    .phone(request.getClientPhone())
+                    .build();
+            return clientRepository.save(newClient);
+        });
 
         Reservation reservation = Reservation.builder()
-                .client(client)
+                .client(client1)
                 .property(property)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
@@ -185,12 +187,34 @@ public class ReservationService {
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
+
+
+
+        Invoice invoice = Invoice.builder()
+                .reservation(savedReservation)
+                .totalAmount(calculateTotalAmount(
+                        savedReservation.getProperty().getPricePerNight(),
+                        request.getStartDate(),
+                        request.getEndDate()))
+                .filePath(generateInvoiceFilePath(savedReservation.getId()))
+                .issuedAt(LocalDateTime.now())
+                .status(DocumentStatus.PENDING)
+                .build();
+        Invoice savedInvoice = invoiceRepository.save(invoice);
+        savedReservation.setInvoice(savedInvoice);
+
+        Contract contract = Contract.builder()
+                    .reservation(savedReservation)
+                    .filePath(generateContractFilePath(savedReservation.getId()))// Generar ruta del archivo (simulado)
+                    .status(DocumentStatus.PENDING)
+                    .build();
+            Contract savedContract = contractRepository.save(contract);
+            savedReservation.setContract(savedContract);
+
         String subject = "Confirmacion de reserva";
         String body = "Su reserva ha sido confirmada. Adjuntamos los archivos PDF de la factura y el contrato.";
         try{
-            Invoice invoice = savedReservation.getInvoice();
-            Contract contract = savedReservation.getContract();
-            if( invoice != null && contract != null ) {
+            if( savedInvoice != null && savedContract != null ) {
                 File invoiceFile = new File(invoice.getFilePath());
                 File contractFile = new File(contract.getFilePath());
 
@@ -199,11 +223,11 @@ public class ReservationService {
 
                 invoice.setStatus(DocumentStatus.SENT);
                 contract.setStatus(DocumentStatus.SENT);
-                invoiceRepository.save(invoice);
-                contractRepository.save(contract);
+                invoiceRepository.save(savedInvoice);
+                contractRepository.save(savedContract);
 
             }else{
-                logger.warn("Factura o contrato no encontrado con el id de reserva: {}",reservation.getId());
+                logger.warn("Factura o contrato no encontrado con el id de reserva: {}",savedReservation.getId());
             }
 
         } catch (Exception e) {
@@ -215,6 +239,19 @@ public class ReservationService {
                 .message("Reserva creada correctamente.")
                 .data(mapToReservationResponse(savedReservation))
                 .build();
+    }
+    private BigDecimal calculateTotalAmount(double pricePerNight, LocalDateTime startDate, LocalDateTime endDate) {
+        long days = java.time.temporal.ChronoUnit.DAYS.between(startDate.toLocalDate(), endDate.toLocalDate());
+        return BigDecimal.valueOf(pricePerNight).multiply(BigDecimal.valueOf(days));
+    }
+    private String generateInvoiceFilePath(Long reservationId) {
+        // Lógica para generar la ruta donde se guardará el archivo PDF de la factura
+        return "/path/to/invoices/invoice_" + reservationId + ".pdf";
+    }
+
+    private String generateContractFilePath(Long reservationId) {
+        // Lógica para generar la ruta donde se guardará el archivo PDF del contrato
+        return "/path/to/contracts/contract_" + reservationId + ".pdf";
     }
 
     @Transactional

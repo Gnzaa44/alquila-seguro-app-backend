@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface PropertyRepository extends JpaRepository<Property, Long> {
-    List<Property> findByStatus(PropertyStatus status);
-    List<Property> findByType(PropertyType type);
+    List<Property> findByPropertyStatus(PropertyStatus propertyStatus);
+    List<Property> findByPropertyType(PropertyType propertyType);
     List<Property> findByCategory(String category);
     List<Property> findByPricePerNightLessThanEqual(Double maxPrice);
 

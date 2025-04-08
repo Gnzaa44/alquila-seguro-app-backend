@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/alquila_seguro_dev
-    username: postgres
-    password: 4477
+    url: jdbc:postgresql://${DEV_DB_HOST}:${DEV_DB_PORT}/${DEV_DB_NAME}
+    username: ${DEV_DB_USERNAME}
+    password: ${DEV_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 5
@@ -12,7 +12,7 @@ spring:
     show-sql: true  # Muestra consultas SQL en logs
   mail:
     host: ${MAIL_HOST_DEV}
-    port: ${MAIL_PORT_DEV}}
+    port: ${MAIL_PORT_DEV}
     username: ${MAIL_USERNAME_DEV}
     password: ${MAIL_PASSWORD_DEV}
     properties:
@@ -31,3 +31,7 @@ server:
     include-binding-errors: always
     include-stacktrace: always
     include-exception: true
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET}
+    expiration: 86400000
