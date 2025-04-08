@@ -57,13 +57,14 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/properties/**").permitAll()
-                        .requestMatchers("/api/clients/**").permitAll()
-                        .requestMatchers("/api/reservations/create").permitAll()
-                        .requestMatchers("/api/consultancies/create").permitAll()
-                        .requestMatchers("/api/payments/mercadopago/webhook").permitAll()
+                        .requestMatchers("/alquila-seg/auth/**").permitAll()
+                        .requestMatchers("/alquila-seg/properties/**").permitAll()
+                        .requestMatchers("/alquila-seg/clients/**").permitAll()
+                        .requestMatchers("/alquila-seg/reservations/create").permitAll()
+                        .requestMatchers("/alquila-seg/consultancies/create").permitAll()
+                        .requestMatchers("/alquila-seg/payments/mercadopago/webhook").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 );
         http.authenticationProvider(daoAuthenticationProvider());
