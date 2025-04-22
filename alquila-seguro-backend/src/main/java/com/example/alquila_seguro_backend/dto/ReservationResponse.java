@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -20,4 +21,5 @@ public class ReservationResponse {
     private LocalDateTime endDate;
     private boolean hasInvoice;
     private boolean hasContract;
+    private BigDecimal totalAmount;
 }
