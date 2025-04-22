@@ -31,6 +31,12 @@ server:
     include-binding-errors: always
     include-stacktrace: always
     include-exception: true
+mercadopago:
+    access-token: ${MERCADO_PAGO_ACCESS_TOKEN_TEST}
+    secret-key: ${SECRET_KEY}
+consultancy:
+  fixed:
+    price: ${CONSULTANCY_PRICE}
 app:
   jwt:
     secret: ${APP_JWT_SECRET}

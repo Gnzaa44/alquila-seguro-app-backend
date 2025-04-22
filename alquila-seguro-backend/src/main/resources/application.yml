@@ -18,7 +18,6 @@ spring:
           auth: true
           starttls:
             enable: true
-
 logging:
   file:
     name: logs/alquila-seguro-backend.log
@@ -26,6 +25,12 @@ logging:
     root: INFO
     org.springframework.web: WARN
     org.hibernate.SQL: ERROR
+mercadopago:
+  access-token: ${MERCADO_PAGO_ACCESS_TOKEN_TEST}
+  secret-key: ${SECRET_KEY}
+consultancy:
+  fixed:
+    price: ${CONSULTANCY_PRICE}
 
 
 

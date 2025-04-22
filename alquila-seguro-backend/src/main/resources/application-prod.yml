@@ -40,3 +40,9 @@ logging:
     root: WARN
     org.springframework.web: ERROR
     org.hibernate.SQL: OFF
+mercadopago:
+    access-token: ${MERCADO_PAGO_ACCESS_TOKEN_TEST}
+    secret-key: ${SECRET_KEY}
+consultancy:
+  fixed:
+    price: ${CONSULTANCY_PRICE}
