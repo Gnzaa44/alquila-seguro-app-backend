@@ -5,11 +5,14 @@ import com.example.alquila_seguro_backend.dto.ContractResponse;
 import com.example.alquila_seguro_backend.dto.CreateContractRequest;
 import com.example.alquila_seguro_backend.entity.DocumentStatus;
 import com.example.alquila_seguro_backend.services.ContractService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -34,12 +37,22 @@ public class ContractController {
     }
     @PostMapping()
     public ResponseEntity<ApiResponse<ContractResponse>> createContract(@Valid @RequestBody CreateContractRequest request) {
-        return ResponseEntity.ok(contractService.createContract(request));
+        try {
+            return ResponseEntity.ok(contractService.createContract(request));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ContractResponse>> updateContractStatus(@PathVariable Long id, @Valid @RequestParam DocumentStatus status) {
-        return ResponseEntity.ok(contractService.updateContractStatus(id, status));
+        try {
+            return ResponseEntity.ok(contractService.updateContractStatus(id, status));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Contrato no encontrado.");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 }
 

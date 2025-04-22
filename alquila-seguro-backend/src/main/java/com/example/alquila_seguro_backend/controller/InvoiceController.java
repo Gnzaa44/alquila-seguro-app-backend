@@ -6,11 +6,14 @@ import com.example.alquila_seguro_backend.dto.InvoiceResponse;
 import com.example.alquila_seguro_backend.entity.DocumentStatus;
 import com.example.alquila_seguro_backend.repositories.InvoiceRepository;
 import com.example.alquila_seguro_backend.services.InvoiceService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -35,12 +38,22 @@ public class InvoiceController {
     }
     @PostMapping()
     public ResponseEntity <ApiResponse<InvoiceResponse>> createInvoice(@Valid @RequestBody CreateInvoiceRequest request) {
-        return ResponseEntity.ok(invoiceService.createInvoice(request));
+        try {
+            return ResponseEntity.ok(invoiceService.createInvoice(request));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity <ApiResponse<InvoiceResponse>> updateInvoiceByStatus( @PathVariable Long id, @Valid DocumentStatus status) {
-        return ResponseEntity.ok(invoiceService.updateInvoiceStatus(id, status));
+        try {
+            return ResponseEntity.ok(invoiceService.updateInvoiceStatus(id, status));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Factura no encontrada.");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
 }

@@ -6,11 +6,14 @@ import com.example.alquila_seguro_backend.dto.PropertyResponse;
 import com.example.alquila_seguro_backend.entity.PropertyStatus;
 import com.example.alquila_seguro_backend.entity.PropertyType;
 import com.example.alquila_seguro_backend.services.PropertyService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -52,22 +55,42 @@ public class PropertyController {
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PropertyResponse>> createProperty(@Valid @RequestBody PropertyCreateRequest request){
-        return ResponseEntity.ok(propertyService.createProperty(request));
+        try {
+            return ResponseEntity.ok(propertyService.createProperty(request));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity <ApiResponse<PropertyResponse>> updateProperty(@Valid @RequestBody PropertyCreateRequest request, @PathVariable Long id){
-        return ResponseEntity.ok(propertyService.updateProperty(id, request));
+        try {
+            return ResponseEntity.ok(propertyService.updateProperty(id, request));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Propiedad no encontrada");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteProperty(@PathVariable Long id){
-        return ResponseEntity.ok(propertyService.deleteProperty(id));
+        try {
+            return ResponseEntity.ok(propertyService.deleteProperty(id));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Propiedad no encontrada");
+        }
     }
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<PropertyResponse>> updatePropertyByStatus(@PathVariable Long id, @Valid @RequestParam PropertyStatus status){
-        return ResponseEntity.ok(propertyService.updatePropertyByStatus(id, status));
+        try {
+            return ResponseEntity.ok(propertyService.updatePropertyByStatus(id, status));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Propiedad no encontrada");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
 

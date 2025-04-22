@@ -5,11 +5,15 @@ import com.example.alquila_seguro_backend.dto.ReservationCreateRequest;
 import com.example.alquila_seguro_backend.dto.ReservationResponse;
 import com.example.alquila_seguro_backend.entity.ReservationStatus;
 import com.example.alquila_seguro_backend.services.ReservationService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -41,22 +45,44 @@ public class ReservationController {
     }
     @PostMapping
     public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@Valid @RequestBody ReservationCreateRequest request) {
-        return ResponseEntity.ok(reservationService.createReservation(request));
+        try {
+            return ResponseEntity.ok(reservationService.createReservation(request));
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @PutMapping("{id}/confirm")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReservationResponse>> confirmReservation(@PathVariable Long id) {
-        return ResponseEntity.ok(reservationService.confirmReservation(id));
+        try {
+            return ResponseEntity.ok(reservationService.confirmReservation(id));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReservationResponse>> cancelReservation(@PathVariable Long id) {
-        return ResponseEntity.ok(reservationService.cancelReservation(id));
+        try {
+            return ResponseEntity.ok(reservationService.cancelReservation(id));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @PutMapping("/{id}/complete")
     public ResponseEntity<ApiResponse<ReservationResponse>> completeReservation(@PathVariable Long id) {
-        return ResponseEntity.ok(reservationService.completeReservation(id));
+        try {
+            return ResponseEntity.ok(reservationService.completeReservation(id));
+        } catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
 
