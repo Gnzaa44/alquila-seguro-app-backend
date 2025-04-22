@@ -14,20 +14,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClientCreateRequest {
-    @NotBlank(message = "First name is required")
-    @Size(min = 3, max = 100, message = "First name must be between 3 and 100 characters long")
+    @NotBlank(message = "Nombre obligatorio.")
+    @Size(min = 3, max = 100, message = "El nombre debe contener entre 3 y 100 caracteres.")
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
-    @Size(min = 3, max = 100, message = "Last name must be between 3 and 100 characters long")
+    @NotBlank(message = "Apellido obligatorio.")
+    @Size(min = 3, max = 100, message = "El apellido debe contener entre 3 y 100 caracteres.")
     private String lastName;
 
-    @Email(message = "Email must be valid")
-    @NotBlank(message = "Email is required")
+    @Email(message = "Email obligatorio.")
+    @NotBlank(message = "Email requerido. ")
     private String email;
 
-    @ArgentinianPhoneNumber(message = "Phone number must be a valid Argentinian phone number")
-    @NotBlank(message = "Phone is required")
-    @Size(min = 10, max = 15, message = "Phone must be between 10 and 15 characters long")
+    @ArgentinianPhoneNumber(message = "El telefono debe ser un numero de Argentina valido.")
+    @NotBlank(message = "Numero obligatorio.")
+    @Size(min = 10, max = 15, message = "El telefono debe contener entre 10 y 15 numeros.")
     private String phone;
 }
