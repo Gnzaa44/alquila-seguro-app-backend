@@ -1,16 +1,14 @@
 package com.example.alquila_seguro_backend.services;
 
 import com.example.alquila_seguro_backend.dto.*;
-import com.example.alquila_seguro_backend.entity.Client;
-import com.example.alquila_seguro_backend.entity.Consultancy;
-import com.example.alquila_seguro_backend.entity.ConsultancyStatus;
-import com.example.alquila_seguro_backend.entity.Property;
+import com.example.alquila_seguro_backend.entity.*;
 import com.example.alquila_seguro_backend.repositories.ClientRepository;
 import com.example.alquila_seguro_backend.repositories.ConsultancyRepository;
 import com.example.alquila_seguro_backend.repositories.PropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +21,9 @@ import java.util.stream.Collectors;
 public class ConsultancyService {
     private final ConsultancyRepository consultancyRepository;
     private final ClientRepository clientRepository;
-    private final PropertyRepository propertyRepository;
     private final EmailService emailService;
+    @Value("${VEEDOR_EMAIL_DEV}")
+    private String emailVeedor;
     private final Logger LOGGER =  LoggerFactory.getLogger(ConsultancyService.class.getName());
     private ClientResponse mapToClientResponse(Client client) {
         return ClientResponse.builder()
@@ -36,76 +35,47 @@ public class ConsultancyService {
                 .createdAt(client.getCreatedAt())
                 .build();
     }
-    private PropertyResponse mapToPropertyResponse(Property property) {
-        return PropertyResponse.builder()
-                .id(property.getId())
-                .title(property.getTitle())
-                .description(property.getDescription())
-                .location(property.getLocation())
-                .pricePerNight(property.getPricePerNight())
-                .category(property.getCategory())
-                .longitude(property.getLongitude())
-                .latitude(property.getLatitude())
-                .numberOfRooms(property.getNumberOfRooms())
-                .numberOfBathrooms(property.getNumberOfBathrooms())
-                .size(property.getSize())
-                .features(property.getFeatures())
-                .amenities(property.getAmenities())
-                .imageUrl(property.getImageUrl())
-                .propertyStatus(property.getPropertyStatus())
-                .propertyType(property.getPropertyType())
-                .build();
-
-    }
     private ConsultancyResponse mapToConsultancyResponse(Consultancy consultancy) {
         return ConsultancyResponse.builder()
                 .id(consultancy.getId())
                 .client(mapToClientResponse(consultancy.getClient()))
-                .property(mapToPropertyResponse(consultancy.getProperty()))
                 .details(consultancy.getDetails())
                 .requestedAt(consultancy.getRequestedAt())
                 .build();
     }
     @Transactional
     public ApiResponse<ConsultancyResponse> createConsultancy(ConsultancyCreateRequest request) {
-        Client client = clientRepository.findById(request.getClientId()).orElse(null);
-        if (client == null) {
-            return ApiResponse.<ConsultancyResponse>builder()
-                    .success(false)
-                    .message("Cliente no encontrado.")
+        Client client = clientRepository.findByEmail(request.getClientEmail()).orElseGet(() -> {
+            Client newClient = Client.builder()
+                    .firstName(request.getClientFirstName())
+                    .lastName(request.getClientLastName())
+                    .email(request.getClientEmail())
+                    .phone(request.getClientPhone())
                     .build();
-        }
-
-        Property property = propertyRepository.findById(request.getPropertyId()).orElse(null);
-        if (property == null) {
-            return ApiResponse.<ConsultancyResponse>builder()
-                    .success(false)
-                    .message("Propiedad no encontrada.")
-                    .build();
-        }
+            return clientRepository.save(newClient);
+        });
 
         Consultancy consultancy = Consultancy.builder()
                 .client(client)
-                .property(property)
                 .details(request.getDetails())
                 .requestedAt(LocalDateTime.now())
                 .status(ConsultancyStatus.PENDING)
                 .build();
 
-        String subject = "Nueva Consultoría Creada";
-        String body = "Se ha creado una nueva consultoría con los siguientes detalles:\n\n" +
-                "Cliente: " + consultancy.getClient().getFirstName() + " " + consultancy.getClient().getLastName() + "\n" +
-                "Correo electrónico: " + consultancy.getClient().getEmail() + "\n" +
-                "Propiedad: " + consultancy.getProperty().getTitle() + "\n" +
-                "Detalles: " + consultancy.getDetails();
+        Consultancy savedConsultancy = consultancyRepository.save(consultancy);
+
+        String subject = "Nueva Consultoría Solicitada";
+        String body = "Se ha solicitado una nueva consultoría con los siguientes detalles:\n\n" +
+                "Cliente: " + savedConsultancy.getClient().getFirstName() + " " + savedConsultancy.getClient().getLastName() + "\n" +
+                "Correo electrónico: " + savedConsultancy.getClient().getEmail() + "\n" +
+                "Detalles: " + savedConsultancy.getDetails() + "\n" +
+                "Un veedor se contactara lo antes posible.";
         try{
-            emailService.sendEmail("example@gmail.com", subject, body);
+            emailService.sendEmail(emailVeedor, subject, body);
 
         } catch (Exception e) {
-            LOGGER.error("Error al enviar el mail a la consultoria con id: {} ", consultancy.getId(), e.getMessage());
+            LOGGER.warn("Error al enviar el mail a la consultoria con id: {} ", savedConsultancy.getId(), e);
         }
-
-        Consultancy savedConsultancy = consultancyRepository.save(consultancy);
         return ApiResponse.<ConsultancyResponse>builder()
                 .success(true)
                 .message("Consultoria creada correctamente.")
@@ -140,17 +110,6 @@ public class ConsultancyService {
                 .build();
     }
 
-    public ApiResponse<List<ConsultancyResponse>> getConsultanciesByProperty(Long propertyId) {
-        List<ConsultancyResponse> consultancies = consultancyRepository.findByPropertyId(propertyId).stream()
-                .map(this::mapToConsultancyResponse)
-                .collect(Collectors.toList());
-        return ApiResponse.<List<ConsultancyResponse>>builder()
-                .success(true)
-                .message("Consultorias por propiedad obtenidas correctamente.")
-                .data(consultancies)
-                .build();
-    }
-
     public ApiResponse<List<ConsultancyResponse>> getConsultanciesByStatus(ConsultancyStatus status) {
         List<ConsultancyResponse> consultancies = consultancyRepository.findByStatus(status).stream()
                 .map(this::mapToConsultancyResponse)
@@ -174,5 +133,16 @@ public class ConsultancyService {
                         .message("Consultoria no encontrada.")
                         .build());
     }
+    public ApiResponse<List<ConsultancyResponse>> getAllConsultancies() {
+        List<ConsultancyResponse> consultancies = consultancyRepository.findAll().stream()
+                .map(this::mapToConsultancyResponse)
+                .collect(Collectors.toList());
+        return ApiResponse.<List<ConsultancyResponse>>builder()
+                .success(true)
+                .message("Consultorias recuperadas correctamente.")
+                .data(consultancies)
+                .build();
+    }
+
 
 }
