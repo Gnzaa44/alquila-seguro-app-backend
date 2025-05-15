@@ -1,7 +1,5 @@
 package com.example.alquila_seguro_backend.repositories;
 
-import com.example.alquila_seguro_backend.entity.Reservation;
-import com.example.alquila_seguro_backend.entity.Consultancy;
 import com.example.alquila_seguro_backend.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -13,5 +11,6 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByReservationId(Long reservationId);
     Optional<Payment> findByConsultancyId(Long consultancyId);
-    List<Payment> findByPaymentStatus(String paymentStatus);
+    Optional<Payment> findByPaymentReference(String paymentReference);
+    Optional<Payment> findByExternalId(String externalId);
 }

@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface ConsultancyRepository extends JpaRepository<Consultancy, Long> {
     List<Consultancy> findByClientId(Long clientId);
-    List<Consultancy> findByPropertyId(Long propertyId);
     List<Consultancy> findByStatus(ConsultancyStatus status);
 }
