@@ -7,11 +7,13 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import java.io.File;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,12 +45,12 @@ public class ReservationService {
                 .amenities(property.getAmenities())
                 .imageUrl(property.getImageUrl())
                 .propertyStatus(property.getPropertyStatus())
-                .propertyType(property.getPropertyType())
                 .build();
     }
     private ReservationResponse mapToReservationResponse(Reservation reservation) {
         boolean hasInvoice = reservation.getInvoice() != null;
         boolean hasContract = reservation.getContract() != null;
+        BigDecimal totalPrice = calculateTotalAmount(reservation.getProperty().getPricePerNight(), reservation.getStartDate(), reservation.getEndDate());
         return ReservationResponse.builder()
                 .id(reservation.getId())
                 .property(mapToPropertyResponse(reservation.getProperty()))
@@ -57,6 +59,7 @@ public class ReservationService {
                 .endDate(reservation.getEndDate())
                 .hasInvoice(hasInvoice)
                 .hasContract(hasContract)
+                .totalAmount(totalPrice)
                 .build();
 
     }
@@ -149,7 +152,6 @@ public class ReservationService {
                     .message("Propiedad no disponible para la reserva.")
                     .build();
         }
-
         // Validate dates
         if (request.getStartDate().isAfter(request.getEndDate())) {
             return ApiResponse.<ReservationResponse>builder()
@@ -215,11 +217,11 @@ public class ReservationService {
         String body = "Su reserva ha sido confirmada. Adjuntamos los archivos PDF de la factura y el contrato.";
         try{
             if( savedInvoice != null && savedContract != null ) {
-                File invoiceFile = new File(invoice.getFilePath());
-                File contractFile = new File(contract.getFilePath());
+                Resource invoiceFile = new ClassPathResource(generateInvoiceFilePath(savedReservation.getId()));
+                Resource contractFile = new ClassPathResource(generateContractFilePath(savedReservation.getId()));
 
-                emailService.sendEmailWithAttachment(reservation.getClient().getEmail(), subject, body, invoiceFile);
-                emailService.sendEmailWithAttachment(reservation.getClient().getEmail(), subject, body, contractFile);
+                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, invoiceFile);
+                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, contractFile);
 
                 invoice.setStatus(DocumentStatus.SENT);
                 contract.setStatus(DocumentStatus.SENT);
@@ -229,6 +231,15 @@ public class ReservationService {
             }else{
                 logger.warn("Factura o contrato no encontrado con el id de reserva: {}",savedReservation.getId());
             }
+            // Código para adjuntar el PDF de prueba
+//            Resource pruebaResource = new ClassPathResource("temp/plan_de_desarrollo_inmobiliaria.pdf");
+//            try {
+//                File pruebaFile = pruebaResource.getFile();
+//                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, pruebaFile);
+//                logger.info("Correo de prueba con adjunto enviado correctamente.");
+//            } catch (IOException e) {
+//                logger.error("Error al acceder al archivo de prueba: {}", e.getMessage());
+//            }
 
         } catch (Exception e) {
             logger.warn("Error al enviar el email con el id de reserva: {}", reservation.getId(), e);
@@ -240,18 +251,47 @@ public class ReservationService {
                 .data(mapToReservationResponse(savedReservation))
                 .build();
     }
+    @Transactional
+    public void updateReservationStatusByPayment(Long reservationId, String paymentStatusMP) {
+        Optional<Reservation> reservationOptional = reservationRepository.findById(reservationId);
+        reservationOptional.ifPresent(reservation -> {
+            ReservationStatus newStatus = null;
+            switch (paymentStatusMP) {
+                case "approved":
+                    newStatus = ReservationStatus.CONFIRMED;
+                    break;
+                case "pending":
+                    newStatus = ReservationStatus.PENDING;
+                    break;
+                case "rejected":
+                case "cancelled":
+                case "refunded":
+                    newStatus = ReservationStatus.CANCELLED;
+                    break;
+                default:
+                    logger.warn("Estado de pago desconocido: {}", paymentStatusMP);
+                    break;
+            }
+            if (newStatus != null && reservation.getStatus() != newStatus) {
+                logger.info("Actualizando el estado de la reserva {} a {} debido al estado del pago: {}", reservationId, newStatus, paymentStatusMP);
+                reservation.setStatus(newStatus);
+                reservationRepository.save(reservation);
+            }
+        });
+        if (reservationOptional.isEmpty()) {
+            logger.warn("No se encontró la reserva con ID: {} para actualizar el estado por el pago.", reservationId);
+        }
+    }
     private BigDecimal calculateTotalAmount(double pricePerNight, LocalDateTime startDate, LocalDateTime endDate) {
         long days = java.time.temporal.ChronoUnit.DAYS.between(startDate.toLocalDate(), endDate.toLocalDate());
         return BigDecimal.valueOf(pricePerNight).multiply(BigDecimal.valueOf(days));
     }
     private String generateInvoiceFilePath(Long reservationId) {
-        // Lógica para generar la ruta donde se guardará el archivo PDF de la factura
-        return "/path/to/invoices/invoice_" + reservationId + ".pdf";
+        return "temp/plan_de_desarrollo_inmobiliaria.pdf";
     }
 
     private String generateContractFilePath(Long reservationId) {
-        // Lógica para generar la ruta donde se guardará el archivo PDF del contrato
-        return "/path/to/contracts/contract_" + reservationId + ".pdf";
+        return "temp/plan_de_desarrollo_inmobiliaria.pdf";
     }
 
     @Transactional
@@ -267,9 +307,6 @@ public class ReservationService {
 
                     reservation.setStatus(ReservationStatus.CONFIRMED);
                     Reservation updatedReservation = reservationRepository.save(reservation);
-
-                    // Create invoice and contract for the confirmed reservation
-                  //  generateInvoiceAndContract(updatedReservation);
 
                     return ApiResponse.<ReservationResponse>builder()
                             .success(true)
