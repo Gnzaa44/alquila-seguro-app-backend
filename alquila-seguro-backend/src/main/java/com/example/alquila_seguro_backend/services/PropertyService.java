@@ -3,9 +3,7 @@ package com.example.alquila_seguro_backend.services;
 import com.example.alquila_seguro_backend.dto.ApiResponse;
 import com.example.alquila_seguro_backend.dto.PropertyCreateRequest;
 import com.example.alquila_seguro_backend.dto.PropertyResponse;
-import com.example.alquila_seguro_backend.entity.Property;
-import com.example.alquila_seguro_backend.entity.PropertyStatus;
-import com.example.alquila_seguro_backend.entity.PropertyType;
+import com.example.alquila_seguro_backend.entity.*;
 import com.example.alquila_seguro_backend.repositories.PropertyRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +34,6 @@ public class PropertyService {
                 .amenities(property.getAmenities())
                 .imageUrl(property.getImageUrl())
                 .propertyStatus(property.getPropertyStatus())
-                .propertyType(property.getPropertyType())
                 .build();
 
     }
@@ -57,7 +54,6 @@ public class PropertyService {
                 .amenities(property.getAmenities())
                 .imageUrl(property.getImageUrl())
                 .propertyStatus(property.getPropertyStatus())
-                .propertyType(property.getPropertyType())
                 .build();
         Property savedProperty = propertyRepository.save(property1);
         return ApiResponse.<PropertyResponse>builder()
@@ -91,7 +87,7 @@ public class PropertyService {
     }
 
     public ApiResponse<List<PropertyResponse>> getPropertiesByCategory(String category) {
-        List<PropertyResponse> properties = propertyRepository.findByCategory(category).stream()
+        List<PropertyResponse> properties = propertyRepository.findByCategory(category.toUpperCase()).stream()
                 .map(this::mapToPropertyResponse)
                 .collect(Collectors.toList());
         return ApiResponse.<List<PropertyResponse>>builder()
@@ -113,7 +109,7 @@ public class PropertyService {
     }
 
     public ApiResponse<List<PropertyResponse>> getPropertiesByLocation(String location) {
-        List<PropertyResponse> properties = propertyRepository.findByLocationContaining(location).stream()
+        List<PropertyResponse> properties = propertyRepository.findByLocationContaining(location.toUpperCase()).stream()
                 .map(this::mapToPropertyResponse)
                 .collect(Collectors.toList());
         return ApiResponse.<List<PropertyResponse>>builder()
@@ -155,9 +151,6 @@ public class PropertyService {
 
                     if (request.getPropertyStatus() != null) {
                         property.setPropertyStatus(request.getPropertyStatus());
-                    }
-                    if (request.getPropertyType() != null) {
-                        property.setPropertyType(request.getPropertyType());
                     }
                     Property updatedProperty = propertyRepository.save(property);
                     return ApiResponse.<PropertyResponse>builder()
@@ -205,20 +198,5 @@ public class PropertyService {
                         .message("Propiedad con el id: " + id + " no encontrada.")
                         .build());
     }
-    public ApiResponse<List<PropertyResponse>> getByPropertyType(PropertyType propertyType) {
-        List<Property> properties = propertyRepository.findByPropertyType(propertyType);
-        List<PropertyResponse> propertyResponses = properties.stream()
-                .map(this::mapToPropertyResponse)
-                .collect(Collectors.toList());
 
-        return ApiResponse.<List<PropertyResponse>>builder()
-                .success(true)
-                .message("Propiedades por tipo filtradas correctamente.")
-                .data(propertyResponses)
-                .build();
-
-    }
-
-
-    
 }
