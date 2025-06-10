@@ -19,6 +19,7 @@ public class ReservationResponse {
     private ClientResponse client;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private ReservationStatus status;
     private boolean hasInvoice;
     private boolean hasContract;
     private BigDecimal totalAmount;
