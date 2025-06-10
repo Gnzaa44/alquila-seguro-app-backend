@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entidad que representa a la reserva dentro del sistema de alquileres temporarios.
@@ -22,7 +24,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"property"}) // <-- ¡Añade esto!
 @Builder
 public class Reservation {
     /**
@@ -58,11 +60,11 @@ public class Reservation {
     @OneToOne(mappedBy = "reservation")
     private Contract contract;
     /**
-     * Reserva asociada a un pago.
+     * Reserva asociada a muchos pagos.
      * Uno --> Uno
      */
-    @OneToOne(mappedBy = "reservation")
-    private Payment payment;
+    @OneToMany(mappedBy = "reservation", fetch = FetchType.LAZY) // Sin cascade ni orphanRemoval
+    private Set<Payment> payments = new HashSet<>();
     /**
      * Fecha de inicio de la reserva.
      */

@@ -5,7 +5,10 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entidad que representa a un pago dentro del sistema de alquileres temporarios.
@@ -22,6 +25,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class Payment {
     /**
      * Identificador único del pago.
@@ -30,25 +34,25 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /**
-     * Reserva relacionada a un pago.
-     * Uno --> Uno (Opcional).
+     * Pagos relacionados a una reserva.
+     * Muchos --> Uno.
      */
-    @OneToOne
-    @JoinColumn(name = "reservation_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id", nullable = true) // 'nullable = true' si es opcional
     private Reservation reservation;
     /**
-     * Consultoria relacionada a un pago.
-     * Uno --> Uno (opcional).
+     * Pagos relacionados a una consultoria.
+     * Muchos --> Uno.
      */
-    @OneToOne
-    @JoinColumn(name = "consultancy_id", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "consultancy_id", nullable = true) // 'nullable = true' si es opcional
     private Consultancy consultancy;
     /**
      * Monto del pago.
      */
     @DecimalMin(value = "0.01", message = "El monto debe ser mayor que 0.")
     @Column(nullable = false)
-    private Double amount;
+    private BigDecimal amount;
     /**
      * Metodo de pago elegido.
      */
@@ -76,5 +80,15 @@ public class Payment {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+    /**
+     * Id del pago generado por Mercado Pago.
+     */
+    @Column(nullable = true)
+    private String paymentIdMP;
 
+    @Column(unique = true) // Asegura que cada externalId sea único
+    private String externalId; // ID de la reserva o consultoría
+
+    @Enumerated(EnumType.STRING) // Guarda el nombre del enum como String en la DB
+    private ExternalEntityType externalEntityType;
 }

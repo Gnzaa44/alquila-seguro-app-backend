@@ -5,9 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Where;
 
-import javax.lang.model.element.Name;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Entidad que representa a una consultoria en el sistema de alquileres temporarios.
@@ -18,7 +21,7 @@ import java.time.LocalDateTime;
  * @since 21/3/2025
  */
 @Entity
-@Table(name = "Consultancies")
+@Table(name = "consultancies")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -40,18 +43,11 @@ public class Consultancy {
     @JoinColumn(name = "client_id")
     private Client client;
     /**
-     * Consultorias relacionadas con una propiedad.
-     * Muchas --> Una
+     * Consultoria asociada a muchos pagos.
+     * Uno --> Muchos.
      */
-    @ManyToOne
-    @JoinColumn(name = "property_id")
-    private Property property;
-    /**
-     * Consultoria asociada a un pago.
-     * Uno --> Uno
-     */
-    @OneToOne(mappedBy = "consultancy")
-    private Payment payment;
+    @OneToMany(mappedBy = "consultancy", fetch = FetchType.LAZY) // Sin cascade ni orphanRemoval
+    private Set<Payment> payments = new HashSet<>();
     /**
      * Motivos de la consultoria realizada.
      */
@@ -59,11 +55,9 @@ public class Consultancy {
     @Size(min = 10, max = 500, message = "Detalles debe contener entre 10 y 500 caracteres.")
     @Column(nullable = false)
     private String details;
-    /**
-     * Consultorias relacionadas con una propiedad.
-     * Muchas --> Una
-     */
-    @Column(nullable = false)
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime requestedAt = LocalDateTime.now();
     /**
      * Estados posibles de la consultoria.
