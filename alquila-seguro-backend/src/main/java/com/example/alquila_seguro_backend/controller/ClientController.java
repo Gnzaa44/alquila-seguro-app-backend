@@ -30,39 +30,21 @@ public class ClientController {
     }
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ClientResponse>> getClientById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(clientService.getClientById(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado.");
-        }
+        return ResponseEntity.ok(clientService.getClientById(id));
     }
     @PostMapping()
     public ResponseEntity<ApiResponse<ClientResponse>> createClient( @Valid @RequestBody ClientCreateRequest request) {
-        try {
             return ResponseEntity.ok(clientService.createClient(request));
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
     }
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ClientResponse>> updateClient(@PathVariable Long id, @Valid @RequestBody ClientCreateRequest request) {
-        try {
-            return ResponseEntity.ok(clientService.updateClient(id, request));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado.");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(clientService.updateClient(id, request));
     }
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteClient(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(clientService.deleteClient(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado.");
-        }
+        return ResponseEntity.ok(clientService.deleteClient(id));
     }
 
 }

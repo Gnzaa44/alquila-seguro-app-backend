@@ -45,44 +45,22 @@ public class ReservationController {
     }
     @PostMapping
     public ResponseEntity<ApiResponse<ReservationResponse>> createReservation(@Valid @RequestBody ReservationCreateRequest request) {
-        try {
-            return ResponseEntity.ok(reservationService.createReservation(request));
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(reservationService.createReservation(request));
     }
     @PutMapping("{id}/confirm")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReservationResponse>> confirmReservation(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(reservationService.confirmReservation(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(reservationService.confirmReservation(id));
     }
     @PutMapping("/{id}/cancel")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReservationResponse>> cancelReservation(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(reservationService.cancelReservation(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(reservationService.cancelReservation(id));
     }
 
     @PutMapping("/{id}/complete")
     public ResponseEntity<ApiResponse<ReservationResponse>> completeReservation(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(reservationService.completeReservation(id));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva no encontrada");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(reservationService.completeReservation(id));
     }
 
 

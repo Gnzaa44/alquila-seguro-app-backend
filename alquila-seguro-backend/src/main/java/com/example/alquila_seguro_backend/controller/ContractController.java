@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ContractController {
 
-    private ContractService contractService;
+    private final ContractService contractService;
 
     @GetMapping("/reservation/{id}")
     public ResponseEntity<ApiResponse<ContractResponse>> getContractByReservationId(@PathVariable Long id) {
@@ -37,22 +37,12 @@ public class ContractController {
     }
     @PostMapping()
     public ResponseEntity<ApiResponse<ContractResponse>> createContract(@Valid @RequestBody CreateContractRequest request) {
-        try {
-            return ResponseEntity.ok(contractService.createContract(request));
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(contractService.createContract(request));
     }
     @PutMapping("/{id}/status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ContractResponse>> updateContractStatus(@PathVariable Long id, @Valid @RequestParam DocumentStatus status) {
-        try {
-            return ResponseEntity.ok(contractService.updateContractStatus(id, status));
-        } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Contrato no encontrado.");
-        } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+        return ResponseEntity.ok(contractService.updateContractStatus(id, status));
     }
 }
 
