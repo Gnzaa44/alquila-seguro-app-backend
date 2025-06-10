@@ -1,8 +1,5 @@
 package com.example.alquila_seguro_backend.dto;
-
-import com.example.alquila_seguro_backend.entity.DocumentStatus;
 import com.example.alquila_seguro_backend.entity.PropertyStatus;
-import com.example.alquila_seguro_backend.entity.PropertyType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -65,8 +62,5 @@ public class PropertyCreateRequest {
     @Enumerated(EnumType.STRING)
     private PropertyStatus propertyStatus;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PropertyType propertyType;
 }
 

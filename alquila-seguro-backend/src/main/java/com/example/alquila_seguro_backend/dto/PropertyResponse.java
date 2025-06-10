@@ -1,7 +1,6 @@
 package com.example.alquila_seguro_backend.dto;
 
 import com.example.alquila_seguro_backend.entity.PropertyStatus;
-import com.example.alquila_seguro_backend.entity.PropertyType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +28,5 @@ public class PropertyResponse {
     private Set<String> features;
     private Set<String> amenities;
     private String imageUrl;
-    private PropertyType propertyType;
     private PropertyStatus propertyStatus;
 }
