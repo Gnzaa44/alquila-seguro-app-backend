@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,7 +16,8 @@ import java.time.LocalDateTime;
 public class ConsultancyResponse {
     private Long id;
     private ClientResponse client;
-    private PropertyResponse property;
     private String details;
     private LocalDateTime requestedAt;
+    private BigDecimal totalAmount;
+    private ConsultancyStatus status;
 }

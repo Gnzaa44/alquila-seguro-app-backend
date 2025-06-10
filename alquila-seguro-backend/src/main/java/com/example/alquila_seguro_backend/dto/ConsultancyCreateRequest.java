@@ -1,13 +1,8 @@
 package com.example.alquila_seguro_backend.dto;
 
-import com.example.alquila_seguro_backend.entity.ConsultancyStatus;
 import com.example.alquila_seguro_backend.validation.ArgentinianPhoneNumber;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,11 +27,8 @@ public class ConsultancyCreateRequest {
     private String clientEmail;
 
     @ArgentinianPhoneNumber(message = "El número de teléfono debe ser un número válido de Argentina.")
-    @NotBlank(message = "Numero de telefono obligatorio.")
+    @NotBlank(message = "Numero de teléfono obligatorio.")
     private String clientPhone;
-
-    @NotNull(message = "ID de la propiedad obligatorio.")
-    private Long propertyId;
 
     @NotBlank(message = "Los detalles de la consulta son obligatorios.")
     @Size(min = 10, max = 500, message = "El mensaje debe contener entre 10 y 500 caracteres.")

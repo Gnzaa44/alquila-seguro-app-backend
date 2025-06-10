@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,10 +17,12 @@ public class PaymentResponse {
     private Long id;
     private Long reservationId;
     private Long consultancyId;
-    private Double amount;
+    private BigDecimal amount;
     private String paymentMethod;
     private PaymentStatus paymentStatus;
     private LocalDateTime paymentDate;
     private String paymentReference;
     private String paymentDescription;
+    private String externalId;
+    private String paymentIdMP;
 }
