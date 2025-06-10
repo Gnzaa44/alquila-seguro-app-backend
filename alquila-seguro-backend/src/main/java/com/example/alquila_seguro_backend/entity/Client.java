@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"reservations", "consultancies"}) // Suponiendo que las tienes
 @Builder
 /**
  * Entidad que representa a un cliente en el sistema de alquileres temporarios.
@@ -84,7 +85,8 @@ public class Client {
     /**
      * Lleva registro de cuando fue creado el cliente.
      */
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,7 +49,8 @@ public class Invoice {
     /**
      * Lleva registro de cuando fue emitida.
      */
-    @Column(nullable = false)
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
     private LocalDateTime issuedAt = LocalDateTime.now();
     /**
      * Almacenará el vínculo del pdf correspondiente.

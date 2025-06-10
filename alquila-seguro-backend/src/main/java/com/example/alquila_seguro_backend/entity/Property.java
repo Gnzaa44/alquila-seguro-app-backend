@@ -24,7 +24,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@ToString(exclude = {"reservations"}) // <-- ¡Añade esto!
 @Builder
 public class Property {
     /**
@@ -39,12 +39,6 @@ public class Property {
      */
     @OneToMany(mappedBy = "property")
     private List<Reservation> reservations;
-    /**
-     * Propiedad asociada a consultorias.
-     * Uno --> Muchos
-     */
-    @OneToMany(mappedBy = "property")
-    private List<Consultancy> consultancies;
     /**
      * Título de la propiedad.
      */
@@ -133,13 +127,5 @@ public class Property {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PropertyStatus propertyStatus;
-    /**
-     * Tipo de propiedad.
-     */
-    @NotNull(message = "Tipo de propiedad obligatorio.")
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PropertyType propertyType;
-
 
 }
