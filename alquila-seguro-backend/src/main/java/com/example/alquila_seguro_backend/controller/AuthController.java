@@ -47,6 +47,7 @@ public class AuthController {
                             .token(jwt)
                             .id(userDetails.getId())
                             .username(userDetails.getUsername())
+                            .role("ADMIN")
                             .build())
                     .build());
         } catch (BadCredentialsException e) {
