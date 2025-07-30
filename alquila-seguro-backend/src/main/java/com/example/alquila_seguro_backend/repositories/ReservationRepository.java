@@ -20,6 +20,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("SELECT r FROM Reservation r WHERE r.property.id = :propertyId AND " +
             "((r.startDate <= :endDate AND r.endDate >= :startDate) OR " +
             "(r.startDate >= :startDate AND r.startDate <= :endDate)) AND " +
-            "r.status <> com.example.alquila_seguro_backend.entity.ReservationStatus.CANCELLED")
+            "r.status = com.example.alquila_seguro_backend.entity.ReservationStatus.CONFIRMED")
     List<Reservation> findOverlappingReservations(Long propertyId, LocalDateTime startDate, LocalDateTime endDate);
 }
