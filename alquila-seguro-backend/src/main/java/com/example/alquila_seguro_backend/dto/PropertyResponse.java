@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -27,6 +28,6 @@ public class PropertyResponse {
     private BigDecimal size;
     private Set<String> features;
     private Set<String> amenities;
-    private String imageUrl;
+    private List<String> imageUrls;
     private PropertyStatus propertyStatus;
 }
