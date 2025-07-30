@@ -47,3 +47,7 @@ mercadopago:
 consultancy:
   fixed:
     price: ${CONSULTANCY_PRICE}
+app:
+  jwt:
+    secret: ${APP_JWT_SECRET}
+    expiration: 86400000
