@@ -117,9 +117,8 @@ public class Property {
     /**
      * URL de las imagenes de la propiedad.
      */
-    @URL
-    @Column(nullable = false)
-    private String imageUrl;
+    @Column(nullable = true)
+    private List<String> imageUrls;
     /**
      * Estados posibles de la propiedad.
      */

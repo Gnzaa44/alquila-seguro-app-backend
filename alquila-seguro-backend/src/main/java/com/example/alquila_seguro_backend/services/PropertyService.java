@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,7 +33,7 @@ public class PropertyService {
                 .size(property.getSize())
                 .features(property.getFeatures())
                 .amenities(property.getAmenities())
-                .imageUrl(property.getImageUrl())
+                .imageUrls(property.getImageUrls())
                 .propertyStatus(property.getPropertyStatus())
                 .build();
 
@@ -52,7 +53,7 @@ public class PropertyService {
                 .size(property.getSize())
                 .features(property.getFeatures())
                 .amenities(property.getAmenities())
-                .imageUrl(property.getImageUrl())
+                .imageUrls(property.getImageUrls())
                 .propertyStatus(property.getPropertyStatus())
                 .build();
         Property savedProperty = propertyRepository.save(property1);
@@ -147,7 +148,7 @@ public class PropertyService {
                     property.setSize(request.getSize());
                     property.setFeatures(request.getFeatures());
                     property.setAmenities(request.getAmenities());
-                    property.setImageUrl(request.getImageUrl());
+                    property.setImageUrls(request.getImageUrls());
 
                     if (request.getPropertyStatus() != null) {
                         property.setPropertyStatus(request.getPropertyStatus());

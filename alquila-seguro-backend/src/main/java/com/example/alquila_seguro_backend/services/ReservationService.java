@@ -7,8 +7,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,7 +22,6 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final ClientRepository clientRepository;
     private final PropertyRepository propertyRepository;
-    private final EmailService emailService;
     private final InvoiceRepository invoiceRepository;
     private final ContractRepository contractRepository;
 
@@ -43,7 +40,7 @@ public class ReservationService {
                 .size(property.getSize())
                 .features(property.getFeatures())
                 .amenities(property.getAmenities())
-                .imageUrl(property.getImageUrl())
+                .imageUrls(property.getImageUrls())
                 .propertyStatus(property.getPropertyStatus())
                 .build();
     }
@@ -57,6 +54,7 @@ public class ReservationService {
                 .client(mapToClientResponse(reservation.getClient()))
                 .startDate(reservation.getStartDate())
                 .endDate(reservation.getEndDate())
+                .status(reservation.getStatus())
                 .hasInvoice(hasInvoice)
                 .hasContract(hasContract)
                 .totalAmount(totalPrice)
@@ -213,37 +211,7 @@ public class ReservationService {
             Contract savedContract = contractRepository.save(contract);
             savedReservation.setContract(savedContract);
 
-        String subject = "Confirmacion de reserva";
-        String body = "Su reserva ha sido confirmada. Adjuntamos los archivos PDF de la factura y el contrato.";
-        try{
-            if( savedInvoice != null && savedContract != null ) {
-                Resource invoiceFile = new ClassPathResource(generateInvoiceFilePath(savedReservation.getId()));
-                Resource contractFile = new ClassPathResource(generateContractFilePath(savedReservation.getId()));
-
-                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, invoiceFile);
-                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, contractFile);
-
-                invoice.setStatus(DocumentStatus.SENT);
-                contract.setStatus(DocumentStatus.SENT);
-                invoiceRepository.save(savedInvoice);
-                contractRepository.save(savedContract);
-
-            }else{
-                logger.warn("Factura o contrato no encontrado con el id de reserva: {}",savedReservation.getId());
-            }
-            // Código para adjuntar el PDF de prueba
-//            Resource pruebaResource = new ClassPathResource("temp/plan_de_desarrollo_inmobiliaria.pdf");
-//            try {
-//                File pruebaFile = pruebaResource.getFile();
-//                emailService.sendEmailWithAttachment(savedReservation.getClient().getEmail(), subject, body, pruebaFile);
-//                logger.info("Correo de prueba con adjunto enviado correctamente.");
-//            } catch (IOException e) {
-//                logger.error("Error al acceder al archivo de prueba: {}", e.getMessage());
-//            }
-
-        } catch (Exception e) {
-            logger.warn("Error al enviar el email con el id de reserva: {}", reservation.getId(), e);
-        }
+        reservationRepository.save(savedReservation); // Guardar la reserva nuevamente con la factura y el contrato asociados
 
         return ApiResponse.<ReservationResponse>builder()
                 .success(true)
@@ -256,16 +224,14 @@ public class ReservationService {
         Optional<Reservation> reservationOptional = reservationRepository.findById(reservationId);
         reservationOptional.ifPresent(reservation -> {
             ReservationStatus newStatus = null;
-            switch (paymentStatusMP) {
+            switch (paymentStatusMP.toLowerCase()) {
                 case "approved":
                     newStatus = ReservationStatus.CONFIRMED;
                     break;
                 case "pending":
                     newStatus = ReservationStatus.PENDING;
                     break;
-                case "rejected":
-                case "cancelled":
-                case "refunded":
+                case "rejected", "cancelled", "refunded":
                     newStatus = ReservationStatus.CANCELLED;
                     break;
                 default:
@@ -287,11 +253,11 @@ public class ReservationService {
         return BigDecimal.valueOf(pricePerNight).multiply(BigDecimal.valueOf(days));
     }
     private String generateInvoiceFilePath(Long reservationId) {
-        return "temp/plan_de_desarrollo_inmobiliaria.pdf";
+        return "temp/terminos_condiciones_alquilaseguro.pdf";
     }
 
     private String generateContractFilePath(Long reservationId) {
-        return "temp/plan_de_desarrollo_inmobiliaria.pdf";
+        return "temp/terminos_condiciones_alquilaseguro.pdf";
     }
 
     @Transactional
