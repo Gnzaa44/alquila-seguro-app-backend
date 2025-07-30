@@ -307,13 +307,6 @@ public class PaymentController {
                         consultancyService.updateConsultancyStatusByPayment(paymentToUpdate.getConsultancy().getId(), String.valueOf(paymentMPDetails.getPaymentStatus()));
                         logger.info("Disparado updateConsultancyStatusByPayment para Consultoria ID {} con estado MP: {}",
                                 paymentToUpdate.getConsultancy().getId(), paymentMPDetails.getPaymentStatus());
-//                        if(newStatus == PaymentStatus.APPROVED) {
-//                            Consultancy consultancy = paymentToUpdate.getConsultancy();
-//                            ConsultancyResponse consultancyResponse = consultancyService.getConsultancyById(consultancy.getId()).getData();
-//                            emailService.sendConsultancyPaidToVeedor(consultancyResponse, emailVeedor);
-//                            emailService.sendConsultancyPaidToClient(consultancyResponse);
-//                            logger.info("Notificación de pago para consultoría ID {}. Lógica de actualización de consultoría.", paymentToUpdate.getConsultancy().getId());
-//                        }
                     }
                 } else {
                     logger.info("El pago con ID MP {} ya tiene el estado {}. No se requiere actualización.", paymentIdMP, newStatus);
@@ -321,8 +314,6 @@ public class PaymentController {
             } else {
                 logger.warn("No se encontró ningún pago PENDING en tu DB para externalId: {} y externalEntityType: {}. No se puede actualizar el pago.",
                         externalIdFromUrl, externalEntityTypeFromUrl);
-                // Si no se encontró un PENDING, podrías buscar por el paymentIdMP si ya lo tienes en tu DB
-                // o loggear esto como un caso de un webhook de un pago no iniciado por tu sistema.
             }
         } else {
             logger.error("No se pudieron obtener los detalles del pago de Mercado Pago para el ID: {}. Error: {}", paymentIdMP, mpPaymentDetailsResponse.getMessage());
