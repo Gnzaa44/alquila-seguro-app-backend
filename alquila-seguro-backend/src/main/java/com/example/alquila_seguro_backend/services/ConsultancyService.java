@@ -4,7 +4,7 @@ import com.example.alquila_seguro_backend.dto.*;
 import com.example.alquila_seguro_backend.entity.*;
 import com.example.alquila_seguro_backend.repositories.ClientRepository;
 import com.example.alquila_seguro_backend.repositories.ConsultancyRepository;
-import com.example.alquila_seguro_backend.repositories.PropertyRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ConsultancyService {
+    private static final Logger logger = LoggerFactory.getLogger(ConsultancyService.class);
     private final ConsultancyRepository consultancyRepository;
     private final ClientRepository clientRepository;
+    @Value("${VEEDOR_EMAIL}")
+    private String veedorEmail;
     private final EmailService emailService;
-    @Value("${VEEDOR_EMAIL_DEV}")
-    private String emailVeedor;
-    private final Logger LOGGER =  LoggerFactory.getLogger(ConsultancyService.class.getName());
     private ClientResponse mapToClientResponse(Client client) {
         return ClientResponse.builder()
                 .id(client.getId())
@@ -41,6 +42,7 @@ public class ConsultancyService {
                 .client(mapToClientResponse(consultancy.getClient()))
                 .details(consultancy.getDetails())
                 .requestedAt(consultancy.getRequestedAt())
+                .status(consultancy.getStatus())
                 .build();
     }
     @Transactional
@@ -64,18 +66,6 @@ public class ConsultancyService {
 
         Consultancy savedConsultancy = consultancyRepository.save(consultancy);
 
-        String subject = "Nueva Consultoría Solicitada";
-        String body = "Se ha solicitado una nueva consultoría con los siguientes detalles:\n\n" +
-                "Cliente: " + savedConsultancy.getClient().getFirstName() + " " + savedConsultancy.getClient().getLastName() + "\n" +
-                "Correo electrónico: " + savedConsultancy.getClient().getEmail() + "\n" +
-                "Detalles: " + savedConsultancy.getDetails() + "\n" +
-                "Un veedor se contactara lo antes posible.";
-        try{
-            emailService.sendEmail(emailVeedor, subject, body);
-
-        } catch (Exception e) {
-            LOGGER.warn("Error al enviar el mail a la consultoria con id: {} ", savedConsultancy.getId(), e);
-        }
         return ApiResponse.<ConsultancyResponse>builder()
                 .success(true)
                 .message("Consultoria creada correctamente.")
@@ -85,11 +75,13 @@ public class ConsultancyService {
 
     @Transactional
     public ApiResponse<ConsultancyResponse> updateConsultancyStatus(Long consultancyId, ConsultancyStatus status) {
-        Consultancy consultancy = consultancyRepository.findById(consultancyId).orElse(null);
-        if (consultancy == null) {
-            return ApiResponse.<ConsultancyResponse>builder().success(false).message("Consultancy not found").build();
-        }
+        Consultancy consultancy = consultancyRepository.findById(consultancyId)
+                .orElseThrow(() -> new EntityNotFoundException("Consultoria no encontrada con ID: " + consultancyId)); // <-- CAMBIO CLAVE
 
+        // Lógica de negocio para validar el cambio de estado
+        if (consultancy.getStatus() == ConsultancyStatus.CLOSED && status == ConsultancyStatus.PENDING) {
+            throw new IllegalArgumentException("El estado de la consultoría no puede ser modificado a PENDING si ya está en CLOSED."); // <-- CAMBIO CLAVE para el 400
+        }
         consultancy.setStatus(status);
         Consultancy updatedConsultancy = consultancyRepository.save(consultancy);
         return ApiResponse.<ConsultancyResponse>builder()
@@ -97,6 +89,74 @@ public class ConsultancyService {
                 .message("Estado de la consultoria actualizado correctamente.")
                 .data(mapToConsultancyResponse(updatedConsultancy))
                 .build();
+    }
+    @Transactional
+    public void updateConsultancyStatusByPayment(Long consultancyId, String paymentStatusMP) {
+        Optional<Consultancy> consultancyOptional = consultancyRepository.findById(consultancyId);
+
+        consultancyOptional.ifPresent(consultancy -> {
+            ConsultancyStatus oldStatus = consultancy.getStatus();
+            ConsultancyStatus newStatus = null;
+            switch (paymentStatusMP.toLowerCase()) {
+                case "approved":
+                    newStatus = ConsultancyStatus.CONFIRMED;
+                    break;
+                case "pending", "refunded", "cancelled", "rejected":
+                    newStatus = ConsultancyStatus.PENDING;
+                    break;
+                default:
+                    logger.warn("Estado de pago desconocido: {}", paymentStatusMP);
+                    break;
+            }
+            if (newStatus != null) {
+                // Bandera para decidir si se enviarán los emails
+                boolean shouldSendEmails = false;
+
+                // Si la consultoría pasa a CONFIRMED y el email no se ha enviado
+                if (newStatus == ConsultancyStatus.CONFIRMED && oldStatus != ConsultancyStatus.CONFIRMED && !consultancy.isConfirmationEmailSent()) {
+                    shouldSendEmails = true;
+                }
+
+                // Actualiza el estado de la consultoría si ha cambiado
+                if (oldStatus != newStatus) {
+                    logger.info("Actualizando el estado de la consultoría {} de {} a {} debido al estado del pago: {}", consultancyId, oldStatus, newStatus, paymentStatusMP);
+                    consultancy.setStatus(newStatus);
+                }
+
+                // --- ¡CAMBIO CLAVE: MARCAR EL FLAG Y GUARDAR ANTES DE ENVIAR EMAILS! ---
+                if (shouldSendEmails) {
+                    consultancy.setConfirmationEmailSent(true); // Marca el flag aquí
+                }
+                // Guarda la consultoría (con el nuevo estado y/o el flag de email enviado)
+                // Esto persiste el flag 'true' en la DB antes de que el email se dispare.
+                consultancyRepository.save(consultancy);
+                // -----------------------------------------------------------------------
+
+                // Ahora, si se decidió que los emails deben enviarse, se disparan.
+                if (shouldSendEmails) {
+                    Client client = consultancy.getClient();
+                    if (client != null && client.getEmail() != null) {
+                        try {
+                            emailService.sendConsultancyPaidToClient(consultancy);
+                            if (veedorEmail != null && !veedorEmail.isEmpty()) {
+                                emailService.sendConsultancyPaidToVeedor(consultancy, veedorEmail);
+                            }
+                            logger.info("Emails de confirmación de consultoría enviados para ID {} a {}.", consultancyId, client.getEmail());
+                        } catch (Exception e) {
+                            logger.error("Error al enviar emails de confirmación para consultoría ID {}: {}", consultancyId, e.getMessage(), e);
+                            // Importante: Si el email falla en este punto, el flag ya está en true.
+                            // Considera una estrategia de reintento externa o una notificación si esto es un problema crítico.
+                            // Para este caso, solo loggear y no revertir el flag suele ser aceptable.
+                        }
+                    } else {
+                        logger.warn("No se pudieron enviar emails para consultoría ID {}: Cliente o email no encontrado/válido.", consultancyId);
+                    }
+                }
+            }
+        });
+        if (consultancyOptional.isEmpty()) {
+            logger.warn("No se encontró la consultoria con ID: {} para actualizar el estado por el pago.", consultancyId);
+        }
     }
 
     public ApiResponse<List<ConsultancyResponse>> getConsultanciesByClient(Long clientId) {
@@ -128,10 +188,8 @@ public class ConsultancyService {
                         .message("Consultoria obtenida correctamente.")
                         .data(mapToConsultancyResponse(consultancy))
                         .build())
-                .orElse(ApiResponse.<ConsultancyResponse>builder()
-                        .success(false)
-                        .message("Consultoria no encontrada.")
-                        .build());
+                .orElseThrow(() -> new EntityNotFoundException("Consultoría no encontrada con ID: " + consultancyId)); // <-- CAMBIO CLAVE
+
     }
     public ApiResponse<List<ConsultancyResponse>> getAllConsultancies() {
         List<ConsultancyResponse> consultancies = consultancyRepository.findAll().stream()
