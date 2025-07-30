@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.URL;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -54,9 +55,7 @@ public class PropertyCreateRequest {
 
     private Set<String> amenities;
 
-    @URL
-    @NotBlank(message = "Image URL is required")
-    private String imageUrl;
+    private List<String> imageUrls;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
