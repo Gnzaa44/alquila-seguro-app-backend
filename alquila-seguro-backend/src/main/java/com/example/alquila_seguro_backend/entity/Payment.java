@@ -19,7 +19,9 @@ import java.util.Set;
  * @since 12/3/2025
  */
 @Entity
-@Table(name="payments")
+@Table(name="payments", uniqueConstraints = {
+@UniqueConstraint(name = "uk_payments_external_id_type_status ", columnNames = {"external_id", "external_entity_type", "payment_status"})
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -86,7 +88,6 @@ public class Payment {
     @Column(nullable = true)
     private String paymentIdMP;
 
-    @Column(unique = true) // Asegura que cada externalId sea único
     private String externalId; // ID de la reserva o consultoría
 
     @Enumerated(EnumType.STRING) // Guarda el nombre del enum como String en la DB
