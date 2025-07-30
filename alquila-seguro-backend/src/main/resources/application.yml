@@ -7,13 +7,6 @@ spring:
         format_sql: true
   cache:
     type: caffeine  # Usa cache en memoria
-logging:
-  file:
-    name: logs/alquila-seguro-backend.log
-  level:
-    root: INFO
-    org.springframework.web: WARN
-    org.hibernate.SQL: ERROR
 consultancy:
   fixed:
     price: ${CONSULTANCY_PRICE}
