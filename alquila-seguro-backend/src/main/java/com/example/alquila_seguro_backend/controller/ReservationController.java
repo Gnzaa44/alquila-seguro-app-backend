@@ -59,6 +59,7 @@ public class ReservationController {
     }
 
     @PutMapping("/{id}/complete")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ReservationResponse>> completeReservation(@PathVariable Long id) {
         return ResponseEntity.ok(reservationService.completeReservation(id));
     }
