@@ -34,8 +34,7 @@ server:
 mercadopago:
     access-token: ${MERCADO_PAGO_ACCESS_TOKEN_TEST}
     secret-key: ${MERCADO_PAGO_SECRET_KEY_TEST}
-    public-key: ${MP_PUBLIC_KEY_TEST}
-    notification-url: https://1dd2-181-41-229-154.ngrok-free.app/alquila-seg/payments/webhooks
+    notification-url: https://www.alquilaseguro.com.ar/alquila-seg/payments/webhooks
 consultancy:
   fixed:
     price: ${CONSULTANCY_PRICE}
@@ -53,5 +52,4 @@ logging:
          mercadopago:
            utils:
              SignatureHelper: DEBUG
-
     root: INFO

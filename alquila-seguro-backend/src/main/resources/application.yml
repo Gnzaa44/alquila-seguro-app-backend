@@ -8,10 +8,10 @@ spring:
   cache:
     type: caffeine  # Usa cache en memoria
   mail:
-    host: ${MAIL_HOST_${spring.profiles.active:dev}}
-    port: ${MAIL_PORT_${spring.profiles.active:dev}}
-    username: ${MAIL_USERNAME_${spring.profiles.active:dev}}
-    password: ${MAIL_PASSWORD_${spring.profiles.active:dev}}
+    host: ${MAIL_HOST_${spring.profiles.active:DEV}}
+    port: ${MAIL_PORT_${spring.profiles.active:DEV}}
+    username: ${MAIL_USERNAME_${spring.profiles.active:DEV}}
+    password: ${MAIL_PASSWORD_${spring.profiles.active:DEV}}
     properties:
       mail:
         smtp:
@@ -25,9 +25,6 @@ logging:
     root: INFO
     org.springframework.web: WARN
     org.hibernate.SQL: ERROR
-mercadopago:
-  access-token: ${MERCADO_PAGO_ACCESS_TOKEN_TEST}
-  secret-key: ${MERCADO_PAGO_SECRET_KEY}
 consultancy:
   fixed:
     price: ${CONSULTANCY_PRICE}
