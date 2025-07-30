@@ -36,9 +36,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private static final List<String> excludedPaths = Arrays.asList(
             "/alquila-seg/auth/**",
             "/alquila-seg/clients/**",
-            "/alquila-seg/reservations/create",
-            "/alquila-seg/consultancies/create",
+            "/alquila-seg/reservations",
+            "/alquila-seg/consultancies",
             "/alquila-seg/payments/webhooks",
+            "/alquila-seg/contracts/**",
+            "/alquila-seg/invoices/**",
+            "/alquila-seg/auth/login",
             "/alquila-seg/payments/reservations/*/create-preference",
             "/alquila-seg/payments/consultancies/*/create-preference",// Adaptado para variable de ruta
             "/v3/api-docs/**",
