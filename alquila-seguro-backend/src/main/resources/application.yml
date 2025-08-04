@@ -1,6 +1,4 @@
 spring:
-  profiles:
-    active: dev  # Cambia a 'prod' en produccion
   jpa:
     properties:
       hibernate:

@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MercadoPagoConfiguration {
 
-    @Value("${MERCADO_PAGO_ACCESS_TOKEN_TEST}")
+    @Value("${MERCADO_PAGO_ACCESS_TOKEN}")
     private String accessToken;
 
     @PostConstruct
